@@ -11,18 +11,16 @@ some of the advantages of ebooks like reflowable text.
 
 ### PDF
 
-Add kindle.sty to the LaTeX file's directoy and add
-`\usepackage{kindle}` to the preamble, then compile as normal with
+Add pdf-ebook.sty to the LaTeX file's directoy and add
+`\usepackage{pdf-ebook}` to the preamble, then compile as normal with
 pdflatex or lualatex.  Depending on the size of the ebook reader, it
-may be necessary to edit kindle.sty to set geometry correctly.
+may be necessary to edit pdf-ebook.sty to set geometry correctly.
 
 ### Kindle
 
 This requires TeX4ht (https://www.tug.org/tex4ht/), dvisvgm (http://dvisvgm.sourceforge.net/), and Kindlegen (http://www.amazon.com/gp/feature.html?docId=1000765211) or Calibre (http://calibre-ebook.com).
 
-First, as for PDF, add kindle.sty to the directory and
-`\usepackage{kindle}` to the preamble.  Then, add images.cfg to the
-directory and run,
+Add images.cfg to the directory and run,
 
 ````
 htlatex <name>.tex images.cfg "-c dvisvgm" "-interaction=nonstopmode"
@@ -41,7 +39,7 @@ kindlegen <filename>.html
 ````
 
 fonts-ebook.sty is an experimental package that selects fonts that
-display better on ereaders.
+display better on ereaders, for both conversion paths.
 
 ## Motivation
 
@@ -49,5 +47,5 @@ Standard LaTeX files don't display well on ebook readers.
 
 ## Installation
 
-ebook.sty uses the geometry and ifpdf packages, both of which are
+pdf-ebook.sty uses the geometry and ifpdf packages, both of which are
 distributed with TeX Live.
