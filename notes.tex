@@ -67,7 +67,7 @@ from
 \url{http://ireaderreview.com/2009/12/22/kindle-font-size-kindle-2-dx-font-size}.  The information from Amazon is at
 \url{http://www.amazon.com/Kindle-answers-from-team-Amazon/forum/FxBVKST06PWP9B/Tx1KSCVDTUJVMWO/1/ref=cm_cd_ef_tft_tp?_encoding=UTF8&cdAnchor=B000FI73MA&asin=B000FI73MA})
 
-In reader.pref, the default is FONT_SIZE=21.  This is probably also be
+In reader.pref, the default is FONT\_SIZE=21.  This is probably also be
 measured in pixels (see my discussion in \ref{sec:pdf}).
 
 \url{%
@@ -110,7 +110,7 @@ it might help me find the right variables.
 Unfortunately, converting 21 and the other values into typographic
 points using the Kindle's resolution and screen size doesn't seem to
 give numbers that line up with the font sizes---21 should be 9.1pt,
-not \approx 11 pt.  Weirdly, the numbers are closer if I assume
+not $\approx$ 11 pt.  Weirdly, the numbers are closer if I assume
 everything is offset by 1, though there's still no close
 correspondence.
 
@@ -238,7 +238,7 @@ Bitstream Charter, as well.
 \label{sec:images}
 
 The \LaTeX Wikibook (\url{%
-  https://en.wikibooks.org/wiki/LaTeX/Importing_Graphics#Supported_image_formats% 
+  https://en.wikibooks.org/wiki/LaTeX/Importing_Graphics#Supported_image_formats%
 }) claims the latex compiler only supports EPS while pdflatex supports
 JPEG, PNG, PDF, and EPS (Apparently it used to not support EPS,
 requiring EPS -> PDF conversion.  Does it just do this internally
@@ -303,27 +303,27 @@ For some ideas and starting points, see \url{
 
 I measured the actual margins on my Kindle Keyboard.  For PDFs with
 margins set to zero in \LaTeX, the bottom is slightly less than 5/16
-inch (\approx 50 px) (including the page number and progress bar), 1/8
-inch (\approx 20 px) everywhere else.  For the ebooks, the default
+inch ($\approx$ 50 px) (including the page number and progress bar), 1/8
+inch ($\approx$ 20 px) everywhere else.  For the ebooks, the default
 margins are slightly less than 1/4 an inch on the left and right,
-slightly less than 5/16 (\approx 50 px) on the bottom (including the
-page number et al.), about 3/16 (\approx 30 px) between the text and
+slightly less than 5/16 ($\approx$ 50 px) on the bottom (including the
+page number et al.), about 3/16 ($\approx$ 30 px) between the text and
 the ebook/Kindle information (title, wifi, battery), and slightly less
-than 7/16 (\approx 70 px) inch between the text and the top of the
+than 7/16 ($\approx$ 70 px) inch between the text and the top of the
 screen.  (This information isn't displayed above PDFs.)  The length of
 the position bar in both modes is 3.125 inches.  In ebook mode, the
 text is aligned above the progress bar, indicating the actual left and
 right margins are something like (3.6 - 3.125)/2 = .475/2 = .2375 =
-19/80 inches (\approx 40 px).  As expected, this is just slightly less
+19/80 inches ($\approx$ 40 px).  As expected, this is just slightly less
 than 1/4 inch.  Measured in mm, the default horizontal margins are
 almost exactly 6 mm, and the others are proportionately larger.
 
-For the default margins, there's a key HORIZONTAL_MARGIN=40 in
+For the default margins, there's a key HORIZONTAL\_MARGIN=40 in
 reader.pref.  For ``fewest words per line,'' the margins are between
-11/16 and 3/4 an inch, and reader.pref HORIZONTAL_MARGIN=120.  For
+11/16 and 3/4 an inch, and reader.pref HORIZONTAL\_MARGIN=120.  For
 ``fewer words per line,'' the margins are between 1/2 and 7/16 an
 inch, and the presumptive (I haven't checked!)  reader.pref
-HORIZONTAL_MARGIN=80.  The Kindle Keyboard's screen resolution is
+HORIZONTAL\_MARGIN=80.  The Kindle Keyboard's screen resolution is
 600x800 (167 dpi).  Doing the math, 40/167 inches ~ .240 inches ~ .608
 cm.  This strongly suggests that the units in reader.pref are pixels.
 
@@ -418,11 +418,12 @@ No file LGRcmr.fd.
 ! LaTeX Error: This NFSS system isn't set up properly.
 \end{lstlisting}
 
-Loren: ``I suspect that's the source of the default \mathup Greek
-alphabet.''
+Loren: ``I suspect that's the source of the default \textbackslash
+mathup Greek alphabet.''
 
 too many math alphabets
 stix + droid/mathastext
+\begin{lstlisting}
 (0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
 (1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
 (2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
@@ -438,9 +439,11 @@ stix + droid/mathastext
 (12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
 (13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
 (14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
-(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)  
+\end{lstlisting}
 
 newpxmath + droid/mathastext
+\begin{lstlisting}
 (0: \T1/cmr/m/n/12 = ecrm1200 [operators])
 (1: \OML/npxmi/m/it/12 = zplmi at 12.0pt [letters])
 (2: \OMS/npxsy/m/n/12 = zplsy at 12.0pt [symbols])
@@ -456,10 +459,12 @@ newpxmath + droid/mathastext
 (12: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
 (13: \T1/fdr/b/n/12 = DroidSerif-Bold-t1 at 12.0pt)
 (14: \nullfont = nullfont)
-(15: \nullfont = nullfont)
+(15: \nullfont = nullfont)  
+\end{lstlisting}
 
 no errors
 stix + droid/[defaultbf]mathastext
+\begin{lstlisting}
 (0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
 (1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
 (2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
@@ -475,10 +480,12 @@ stix + droid/[defaultbf]mathastext
 (12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
 (13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
 (14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
-(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)  
+\end{lstlisting}
 
 too many math alphabets
 stix + droid/[defaultit]mathastext
+\begin{lstlisting}
 (0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
 (1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
 (2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
@@ -495,9 +502,11 @@ stix + droid/[defaultit]mathastext
 (13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
 (14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
 (15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+\end{lstlisting}
 
 no errors
 stix + droid/[defaultit,defaultbf]mathastext
+\begin{lstlisting}
 (0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
 (1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
 (2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
@@ -513,10 +522,12 @@ stix + droid/[defaultit,defaultbf]mathastext
 (12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
 (13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
 (14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
-(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)  
+\end{lstlisting}
 
 no errors
 stix + droid/[defaultit,defaultbf,defaultsf]mathastext
+\begin{lstlisting}
 (0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
 (1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
 (2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
@@ -532,10 +543,12 @@ stix + droid/[defaultit,defaultbf,defaultsf]mathastext
 (12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
 (13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
 (14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
-(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)  
+\end{lstlisting}
 
 no errors
 stix + droid/[defaultit,defaultbf,defaultsf,defaulttt]mathastext
+\begin{lstlisting}
 (0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
 (1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
 (2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
@@ -551,10 +564,12 @@ stix + droid/[defaultit,defaultbf,defaultsf,defaulttt]mathastext
 (12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
 (13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
 (14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
-(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)  
+\end{lstlisting}
 
 other errors
 [nomath]stix + droid/mathastext
+\begin{lstlisting}
 (0: \OT1/cmr/m/n/12 = cmr12)
 (1: \OML/cmm/m/it/12 = cmmi12)
 (2: \OMS/cmsy/m/n/12 = cmsy10 at 12.0pt)
@@ -570,7 +585,8 @@ other errors
 (12: \nullfont = nullfont)
 (13: \nullfont = nullfont)
 (14: \nullfont = nullfont)
-(15: \nullfont = nullfont)
+(15: \nullfont = nullfont)  
+\end{lstlisting}
 
 
 \subsection{PDF setup}
@@ -658,7 +674,7 @@ symbols with Unicode code points
 
 tex4ht also accepts aliases to other .htf files in lieu of a list of
 characters.  I created a module aliases.py with two utility functions,
-alias() and parse_map(); parse_map() extracts information about which pfbs
+alias() and parse\_map(); parse\_map() extracts information about which pfbs
 are being encoded with which encodings while alias() links to another
 .htf for fonts with standard encodings and adds CSS font properties.  
 
@@ -938,9 +954,9 @@ thread,
 
 Both PDF and EPS images need more testing.
 
-\DeclareGraphicsExtensions and \DeclareGraphicsRule may be useful, see
+\textbackslash DeclareGraphicsExtensions and \textbackslash DeclareGraphicsRule may be useful, see
 the graphicx PDF page 13.  Probably the order I want for
-\DeclareGraphicsExtension is EPS, PDF, PNG, JPEG.
+\textbackslash DeclareGraphicsExtension is EPS, PDF, PNG, JPEG.
 
 
 \subsection{Call arXiv API with Python}
