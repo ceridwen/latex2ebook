@@ -40,5 +40,14 @@ or (with Kindlegen)
 kindlegen <filename>.html
 ````
 
-fonts-kindle.sty is an experimental package that selects fonts that
-display better on the Kindle.
+fonts-ebook.sty is an experimental package that selects fonts that
+display better on ereaders.
+
+## Motivation
+
+Standard LaTeX files don't display well on ebook readers.
+
+## Installation
+
+ebook.sty uses the geometry and ifpdf packages, both of which are
+distributed with TeX Live.
