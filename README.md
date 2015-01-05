@@ -25,7 +25,7 @@ First, as for PDF, add kindle.sty to the directory and
 directory and run,
 
 ````
-htlatex <name>.tex images.cfg ``''``-c dvisvgm''``-interaction=nonstopmode''
+htlatex <name>.tex images.cfg "-c dvisvgm" "-interaction=nonstopmode"
 ````
 
 and (with Calibre)

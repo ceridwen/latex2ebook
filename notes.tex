@@ -749,8 +749,8 @@ that out first and it would be a lot of work.
 Makefile for htlatex.
 
 \begin{lstlisting}
-htlatex <name>.tex images.cfg ``''``-c dvisvgm''``-interaction=nonstopmode''
-htlatex <name>.tex ``xhtml,svg''``''``-c dvisvgm''``-interaction=nonstopmode''
+htlatex <name>.tex images.cfg "-c dvisvgm" "-interaction=nonstopmode"
+htlatex <name>.tex "xhtml,svg" "" "-c dvisvgm" "-interaction=nonstopmode"
 
 ebook-convert <name>.html .azw3 --pretty-print
 ebook-convert <name>.html .mobi --pretty-print --mobi-keep-original-images --mobi-file-type=new
