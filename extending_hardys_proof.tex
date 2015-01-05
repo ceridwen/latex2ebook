@@ -1,0 +1,287 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\newtheorem{axiom}{Axiom}
+
+\newcommand{\R}{{\mathbb R}} %real numbers
+\newcommand{\C}{{\mathbb C}} %complex numbers
+
+\newcommand{\maps}{\colon} %correct symbol for colon in f: X -> Y
+
+\usepackage{fonts-kindle}
+% \usepackage{pdf-kindle}
+
+\begin{document}
+
+Here I want to extend Hardy's derivation of classical and quantum
+probability theories on finite-dimensional Hilbert spaces from
+``reasonable axioms'' to countably-infinite- and
+uncountably-infinite-dimensional Hilbert spaces.  I'm ignoring the
+field theory problems to start, the only correct physical theories are
+all field theories but they introduce significant mathematical
+complexities and no one knows how to tackle those so I'm certainly not
+going to solve them.
+
+Hardy's level of abstraction obscures rather than illuminates some
+important issues, and the actual connection between real experiments
+and Hardy's formulation is not very clear.  As far as we know, all
+physical systems can be described by Lagrangians on pairs of
+generalized coordinates $q_i$ and $p_i$.  The relationship between
+$q_i$ and $p_i$ is part of the dynamics and determined by the form of
+the Lagrangian, so we're going to ignore that.  In practice in
+classical physics, I can't think of any models where $q_i$ and $p_i$
+are discrete rather than continuous variables\footnote{Polarization
+  modes for the EM field?}, but that's a fact about the world, not
+part of the logical structure of the theory.  That said, there is a
+sense in which all real measurements are discrete and could be mapped
+to the integers: because a real instrument has finite precision
+(oscillations of a clock, gradations on a cylinder), a real instrument
+can only generate a countably infinite, or least a discrete but
+unbounded, set of measurements.  There's also a sense in which
+measurements are continuous, which is that we always expect we can
+build a more precise instrument that will measure the same thing.  In
+Hardy's model of classical probability theory, there's a vector
+$\mathbf{p}$ of probabilities that's equivalent to a given physical
+state.  Note that when Hardy says ``state,'' in physical terms he
+actually means \emph{point in phase space}, so in some sense we've
+already flattened a physical system that may have multiple dimensions
+into $\R$.  The simplest possible classical system would have two
+generalized coordinates $q$ and $p$ each taking on two values, 0 and
+1, and so in Hardy's formulation four total states, $(0,0)$, $(1,0)$,
+$(0,1)$, and $(1,1)$, corresponding to each of the four allowed states
+in phase space.  In this case, what Hardy calls the ``degrees of
+freedom'' $K$ of the system will be four, and thus Hardy's use of the
+``degrees of freedom'' has almost nothing to do with the way the term
+is used in normal physics.  This flattening is very similar to the
+flattening that Hardy does when taking the quantum operators/matrices
+that define quantum measurements and quantum states and turning them
+into vectors.  Now while it's possible to put $\R^2$ into one-to-one
+correspondence with $\R$, this is not going to be a nice
+structure-preserving map, the best you can get is something like a
+continuous space-filling curve which won't be adequate for doing
+physics\footnote{Provided Steve can prove that}.  There may be a way
+to make this mathematically valid using a different
+formulation\footnote{The set of Hermitian operators over a Hilbert
+  space is also a vector space.  Also, a traditional probability
+  distribution on phase space is a map from phase space into $\R$.},
+but for now I'm going to ignore the issue.  Hardy's frequentist
+probability interpretation is also unhelpful in defining measurements.
+The Bayesian interpretation is probably right and I need to think
+carefully about the issues involved there, particularly the notion of
+using Bayes' rule to update knowledge about a state in light of a
+measurement, but here I'm going to gloss over \emph{probability}
+interpretational issues.
+
+% In Hardy's terminology, an ``outcome'' is an integer in $[0,L]$ (where
+% 0 represents a special null outcome) that an instrument spits out when
+% presented with a prepared state.  Note that Hardy assumes that the set
+% of outcomes a device can create is bounded above by some integer, but
+% this is not physical, at least in the quantum case: consider measuring
+% the number of oscillations a clock makes before a nucleus decays.  I'm
+% going to take the general case where the set of outcomes is infinite.
+% A ``measurement'' is the \emph{probability} that the outcome falls in
+% some arbitrary subset of all possible values of $l$, represented by a
+% vector $\mathbf{r}_l$ such that $\mathbf{r}_l \cdot \mathbf{p}$
+% returns the probability of measuring that outcome.  There must be some
+% mapping between set logic on outcome-space (union, intersection,
+% etc. which correspond to various Boolean logic operations) and
+% addition and subtraction on measurement vectors which Hardy neglects
+% to construct, but it's fairly clear how to do that so I'm going to
+% ignore it.
+
+There's some circularity in Hardy's definition of physical states and
+measurement because he defines the probabilities that make up
+$\mathbf{p}$ as the outcomes of measurements and then defines
+measurements \emph{after} that.  I'm going to proceed in a different
+order.  Let a physical state be a vector $\mathbf{p}$ in some set $S
+\subset \R^K$ where $S$ is the set of physically-allowed states and
+each component of $\mathbf{p}$ is in $[0,1]$.  A measurement is a
+function that given a state vector $\mathbf{p}$ returns a probability,
+
+\begin{equation}
+  \label{eq:measurement_defn}
+  f \maps \R^K \to [0,1].
+\end{equation}
+
+Hardy allows $\mathbf{p} = \mathbf{0}$ as a valid vector and requires
+that $f(\mathbf{0}) = 0$.  As I'm going to be concerned with taking
+$\mathbf{p}$ as a vector with a countably or uncountably infinite set
+of entries, we're going to be dealing with some unphysicality here,
+since it would take a countably or uncountably infinite number of
+measurements to determine $\mathbf{p}$.  It's common practice, though,
+to generalize from a finite number of data points to a continuous
+underlying distribution.  This also means that I'm going to have to
+generalize $S$ from being a subset in $\R^K$ to a subset in some
+suitable infinite-dimensional generalization of Euclidean space.
+
+The first step in Hardy's proof is to show that $f$ has to be linear.
+Hardy claims this follows from Axiom 1.
+
+\begin{quote}
+  Relative frequencies (measured by taking the proportion of times a
+  particular outcome is observed) tend to the same value (which we
+  call the probability) for any case where a given measurement is
+  performed on an ensemble of $n$ systems prepared by some given
+  preparation in the limit as $n$ becomes infinite.
+\end{quote}
+
+I don't think this axiom gets us where we want to go, so I'm going to
+replace it with two clearer axioms.
+
+\begin{axiom}
+  Any convex combination of physical states is also a physical state.
+  In other words, $S$ is a convex set.
+\end{axiom}
+
+This may be interpreted as requiring that a probabilistic mixture of
+multiple physical states also be a physical state.
+
+\begin{axiom}
+  The measured probability for a physical state that's a convex
+  combination of other physical states equals the convex combination
+  of the measured probabilities for each state in the convex
+  combination.
+\end{axiom}
+
+A quick, non-rigorous way to state this is that measurement and state
+mixing commute.  If this axiom was violated, then it wouldn't make
+sense to talk about convex combinations of states also being states,
+because measuring a mix of states would produce different
+probabilities than measuring the individual states in the mixture and
+calculating the probabilities.  Another way of stating this axiom is
+that $f$ has to be both a convex function and a concave function.
+
+There's no way to express these convex combinations as sums in the
+usual way because they may be sums over sets with uncountable numbers
+of elements.  To prove linearity, I have to prove that,
+
+\begin{eqnarray*}
+  & & f(\mathbf{p}_A + \mathbf{p}_B) = f(\mathbf{p}_A) + f(\mathbf{p}_B)\\
+  & & f(\alpha \mathbf{p}) = \alpha f(\mathbf{p})
+\end{eqnarray*}
+
+where $\alpha \in \R$.  Hardy's proof is, I think, unnecessarily
+complicated.  The basic idea underlying the proof is that any function
+that's both convex and concave is affine.  (An affine function is a
+linear function with an origin shift.)  I begin by establishing
+homogeneity of degree 1 as Hardy does.  Taking $\lambda \mathbf{p}_A +
+(1 - \lambda)\mathbf{p}_B$ as $\lambda \mathbf{p} + (1 -
+\lambda)\mathbf{0}$ and using the second axiom, $f(\mathbf{0}) = 0$,
+and the basic properties of vector spaces that $\alpha \mathbf{0} =
+\mathbf{0}$ $\forall \alpha$ and $\mathbf{v} + \mathbf{0} =
+\mathbf{v}$ $\forall \mathbf{v}$,
+
+\begin{eqnarray}
+  f(\lambda \mathbf{p} + (1 - \lambda)\mathbf{0}) & = & \lambda
+  f(\mathbf{p}) + (1 - \lambda)f(\mathbf{0}) \\
+  f(\lambda \mathbf{p} + \mathbf{0}) & = & \lambda f(\mathbf{p}) + (1
+  - \lambda) 0 \\
+  f(\lambda \mathbf{p}) & = & \lambda f(\mathbf{p})
+\end{eqnarray}
+
+Let $\gamma = 1/\lambda$, so $\gamma \geq 1$, and $\mathbf{p}' =
+\mathbf{p} / \lambda$.  Then,
+
+\begin{equation}
+  \label{eq:homogeneity}
+  f(\gamma \mathbf{p}') = \gamma f(\mathbf{p}').
+\end{equation}
+
+This proves that homoegeneity holds for all $\alpha \geq 0$ which is
+sufficient because $f$ is defined only on $S$ anyways.  To prove
+additivity, let $\lambda = 1/2$.  Then, using homogeneity,
+
+\begin{eqnarray*}
+  f(\lambda \mathbf{p}_A + (1 - \lambda)\mathbf{p}_B) & = & \lambda
+  f(\mathbf{p}_A) + (1 - \lambda)f(\mathbf{p}_B)\\
+  f(\frac{1}{2} \mathbf{p}_A + \frac{1}{2} \mathbf{p}_B) & = & \frac{1}{2}
+  f(\mathbf{p}_A) + \frac{1}{2} f(\mathbf{p}_B)\\
+  f(\mathbf{p}_A + \mathbf{p}_B) & = & f(\mathbf{p}_A) +
+  f(\mathbf{p}_B)
+\end{eqnarray*}
+
+There's also probably a way to extend $f$ from $S$ to the whole vector
+space if that's necessary.
+
+% https://math.stackexchange.com/questions/104810/how-to-prove-convexconcave-affine
+
+This is a slightly different proof using the same concepts.  Let $f$
+be a function that's both convex and concave and $g(\mathbf{x}) =
+f(\mathbf{x}) - f(\mathbf{0})$.  $g$ is also concave and convex,
+$g(\mathbf{0}) = 0$, and proving $g$ is linear proves $f$ is affine.
+If $t > 1$, $x = \frac{1}{t} t\mathbf{x} + (1 - \frac{1}{t})
+\mathbf{0}$.  Using the definition of convex function,
+
+\begin{eqnarray*}
+  g(\mathbf{x}) & = & g\left(\frac{1}{t} t\mathbf{x} + \left(1 -
+      \frac{1}{t}\right) \mathbf{0}\right)\\
+  & \leq & \frac{1}{t} g(t\mathbf{x}) + (1 - \frac{1}{t})
+  g(\mathbf{0})\\
+  t g(\mathbf{x}) & \leq & g(t\mathbf{x})
+\end{eqnarray*}
+
+Since $g$ is also concave, $tg(\mathbf{x}) \geq g(t\mathbf{x})$ by the
+same logic, thus $tg(\mathbf{x}) = g(t\mathbf{x})$, proving
+homogeneity.  With homogeneity, the same argument given above shows
+additivity.
+
+
+
+% \begin{axiom}
+%   There exist $K$ measurements where $f_k(\mathbf{p}) = p_k$.
+% \end{axiom}
+
+
+% The first step in Hardy's proof is to show that $f$ has to be linear.
+% For any states $\mathbf{p}_A$ and $\mathbf{p}_B$, the convex
+% combination $\lambda\mathbf{p}_A + (1-\lambda)\mathbf{p}_B$, where $0
+% \leq \lambda \leq 1$, is another valid state, a mixture of
+% $\mathbf{p}_A$ with probability $\lambda$ and $\mathbf{p}_B$ with
+% probability $1 - \lambda$.  Hardy cites Axiom 1 in deriving this but
+% it doesn't have anything to do with Axiom 1's frequentism, it's about
+% the structure of the physical state space and about probabilities.  By
+% definition,
+
+% \begin{equation}
+%   \label{eq:convex_combination}
+%   f(\lambda\mathbf{p}_A + (1-\lambda)\mathbf{p}_B) = \lambda
+%   f(\mathbf{p}_A) + (1-\lambda)f(\mathbf{p}_B).
+% \end{equation}
+
+% This is the statement that the probability of a certain measured
+% outcome with a state that's a mixture of two other states is the same
+% as the probability that the mixture is in the first state times the
+% probability of measuring that outcome for the first state plus the
+% probability that the mixture is in the second state times the
+% probability of measuring that outcome for the second state.  This is
+% again basic probability combined with the definition of the state
+% space.   Hardy also uses an argument based on the fiducial
+% measurements to show \ref{eq:convex_combination}, but this isn't
+% necessary and may not generalize to the infinite-dimensional case.
+
+
+% Hardy is deriving classical and quantum probability theory from some axioms.  We've got two parameters, K and N.  K is the minimum number of probability measurements needed to define the physical state for a system.  N is the maximum number of states that can be distinguished by a single measurement.
+
+% 1 is basically a frequentist definition of probabilities.  Not important.
+% 2: K is a function of N.
+% 3: "A system whose state is constrained to belong to an M dimensional subspace (i.e. have support on only M of a set of N possible distinguishable states) behaves like a system of dimension M."
+% 4: "A composite system consisting of subsystems A and B satisfies $N = N_A N_B$ and $K = K_A K_B$"
+% 5: Another axiom that's not really necessary---it requires continuous reversible transformations between pure states and is only there so you end up with quantum rather than classical logic "axiomatically."
+%  The meat is in 2-4.  If I'd written this paper I would have set it up differently, my description is cutting out the (to me) inessential parts.
+%  We start with a vector p of dimension K that's all probabilities and describes the state.  The proof basically assumes (AFAICT) that K is finite.  I'm looking at the cases where K is not finite.
+%  A measurement of the physical state is some function f(p) -> [0,1], in other words a probability.
+% Step 1: prove f's linear.
+%  So, the proof calls the components of $p$ "fiducial measurements."  This is just a choice of basis, AFAICT.  When f is a fiducial measurement, it just picks out one of the components.
+%  Using basic properties of probabilities (Axiom 1), the fiducial measurements determine a convex set in the vector space in which $p$ lives.  Likewise, properties of probabilities allow one to prove the image of that set under f is also convex.  The claim is because f preserves convexity, f has to be linear.  The proof involves decomposing p and f(p) by an arbitrary basis and then manipulating the sum (linear combination), and you can probably see right there how that might run into problems in an infinite-dimensional space.
+
+
+% Random connections time: I did a search for "probabilities "convex
+% sets"" and found this, http://arxiv.org/pdf/1302.4940.pdf , and the
+% following sentence: "Convex sets of probabilities have been used as
+% a model for unknown or partially known probabilities."
+
+\end{document} 

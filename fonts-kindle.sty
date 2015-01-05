@@ -1,0 +1,192 @@
+% \needsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{fonts-kindle}[2014/04/01 v0.0 Fonts for display on the Kindle]
+
+\RequirePackage{iftex}
+\ifXeTeX
+	\RequirePackage{xltxtra}
+	\RequirePackage{polyglossia}
+	\setmainlanguage[variant=us]{english}
+\else\ifLuaTeX
+	\RequirePackage{luatextra}
+	\RequirePackage[english]{babel}
+	\RequirePackage{lualatex-math}
+\else\ifPDFTeX
+	\RequirePackage{fixltx2e, metalogo}
+	\RequirePackage[english]{babel}
+\else
+%% Set up some defaults in case we compile this on some version of LaTeX
+%% other than LuaLaTeX or XeLaTeX, and which supports unicode-math.
+	\RequirePackage{fixltx2e, realscripts, metalogo}
+	\RequirePackage[english]{babel}
+\fi\fi\fi
+
+%% The xfrac package redefines \oldstylenums in a way that breaks fontspec, so
+%% include xfrac before fontspec:
+\RequirePackage{xfrac}
+\RequirePackage{graphicx}
+\RequirePackage{ellipsis}
+\RequirePackage{xcolor} % Perhaps set to the Gray model?
+
+\DeclareRobustCommand{\altcolor}{\color{darkgray}}
+
+\ifPDFTeX
+	%% A fallback for backward compatibility.
+	%% Override most of these with stix:
+	\RequirePackage{amssymb}
+	\RequirePackage{tgtermes}
+	\RequirePackage{inconsolata}
+	\RequirePackage{tgheros}
+	\RequirePackage{tgadventor}
+	\RequirePackage[notext]{stix}
+	\RequirePackage[T1]{fontenc}
+	\RequirePackage[utf8x]{inputenc} % Or [utf8] if this causes errors.
+
+%% "With amsmath v2.14 or newer, it is recommended to load it (and/or packages
+%% that load it) after the stix package. Older versions of amsmath must be
+%% loaded before the stix package, otherwise errors will arise.
+	\RequirePackage{mathtools}
+	\RequirePackage{amsthm}	% Consider using ntheorem
+
+%% Lining numbers are the default in this setup, so make this a no-op.
+	\DeclareRobustCommand{\liningnums}[1]{#1}
+
+	\DeclareRobustCommand{\uppi}{\ensuremath\mathrm\pi}
+
+	\DeclareRobustCommand{\titleface}{\rmfamily\bfseries\scshape}
+	\DeclareRobustCommand{\captionface}{\sffamily}
+	\DeclareRobustCommand{\labelfamily}{\fontfamily{qhv}\selectfont}
+	\DeclareRobustCommand{\headerfamily}{\sffamily}
+
+\else
+%% This is the preferred version:
+\RequirePackage{mathtools}
+\RequirePackage{amsthm}	% Consider using ntheorem
+%% Override most of these if using unicode math fonts:
+\RequirePackage{amssymb}
+
+\RequirePackage{fontspec}
+\RequirePackage[ math-style=ISO,
+             vargreek-shape=TeX,
+             slash-delimiter=frac
+           ]{unicode-math}
+\RequirePackage{newunicodechar}
+
+\defaultfontfeatures{ Ligatures=TeX,
+                      Scale=MatchLowercase }
+
+%% Lining numbers don’t quite work out of the box for some of these fonts;
+%% we must explicitly turn old-style numbers off.
+\DeclareRobustCommand{\liningnums}[1]{\addfontfeature{RawFeature=-onum,Numbers=Lining} {#1}}
+%% Enable old-style numbers as an OpenType font feature.
+\DeclareRobustCommand{\oldstylenums}[1]{\addfontfeature{RawFeature=-lnum,Numbers=OldStyle} {#1}}
+
+\setmainfont[ Numbers={Proportional},
+% \ifLuaTeX     Renderer=Basic,				\fi
+               Ligatures={Common, Rare, TeX},
+             ]{TeX Gyre Termes}
+
+% Gillius ADF No2 (a Gill Sans clone) is a good match for Palatino.  It does
+% not, however, come with small caps features.
+\setsansfont[ Ligatures={Common, TeX}
+            ]{Gillius ADF No2}
+% Alternatives:
+% \setsansfont[Ligatures={Common,TeX}]{Myriad Web Pro}
+% \setsansfont[Ligatures={Common,TeX}]{TeX Gyre Adventor}
+
+\setmonofont{Inconsolata}
+
+\setmathfont{XITS Math}
+
+%% The following are in the TeX Live distribution, and also good examples of
+%% how to select alternative alphabets.
+
+\setmathfont[ range={\mathcal,\mathbfcal},
+              Scale=MatchUppercase,
+              StylisticSet=1
+            ]{XITS Math}
+
+%\setmathfont[ range={\mathcal,\mathbfcal},
+%              Scale=MatchUppercase,
+%              Style=Alternate
+%            ]{Asana Math}
+
+\setmathfont[ range={\mathscr,\mathbfscr},
+              Scale=MatchUppercase,
+            ]{XITS Math}
+
+%% XITS Math actually supports a few additional math alphabets that
+%% unicode-math does not, through its stylistic sets.  Commands to use them
+%% could go here.
+
+\newfontface\titleface[ Letters=SmallCaps,
+                        Numbers={Proportional, Lining},
+% \ifLuaTeX               Renderer=Basic,				\fi
+                        Ligatures={Common, Rare, TeX}
+                      ]{TeX Gyre Termes Bold}
+\newfontface\captionface{Gillius ADF No2}
+\newfontfamily\labelfamily[ Numbers={Monospaced},
+% \ifLuaTeX                   Renderer=Basic,			\fi
+                            Scale=MatchUppercase]{TeX Gyre Heros}
+\newfontfamily\headerfamily[ Scale=MatchUppercase,
+%                             Numbers={Proportional, Lining}
+                           ]{Gillius ADF No2}
+%\newfontfamily\headerfamily{TeX Gyre Adventor}
+
+\setmathfont[range="220E, Scale=MatchUppercase]{XITS Math}
+\DeclareRobustCommand{\QED}{\ensuremath{\mathup\char"220E}}
+
+\fi
+
+%% Microtype needs to be loaded after certain other packages, including
+%% inputenc, babel and fontspec.
+\RequirePackage[verbose]{microtype}
+
+% Really Euler:
+\DeclareMicrotypeAlias{NeoEuler}{eus}
+
+% \RequirePackage{breqn}
+
+\RequirePackage[sf, bf, medium, compact]{titlesec}      % customizing section titles
+% \titleformat{\section}{\headerfamily\bfseries\large}{}{0em}{}
+% \titleformat{\subsection}{\headerfamily\bfseries}{}{0em}{}
+\titleformat{\subsubsection}[runin]{\headerfamily\bfseries}{}{0em}{}
+\titlespacing{\subsubsection}{0pt}{5pt}{5pt}
+
+%% Display section numbers as lining, numbering within sections as oldstyle.
+\def\thesection{\labelfamily \liningnums{\arabic{section}}}
+\def\thesubsection{\labelfamily{\liningnums{\arabic{section}}.\oldstylenums{\arabic{subsection}}}}
+
+\titlelabel{\makebox[1cm][l]{\thetitle}}
+
+% This is a bit excessive
+
+% \numberwithin{equation}{subsection}
+% \renewcommand{\theequation}{\normalfont \liningnums{\arabic{section}}.\oldstylenums{\arabic{subsection}}.\oldstylenums{\arabic{equation}}}
+
+\numberwithin{equation}{section}
+\renewcommand{\theequation}{\normalfont \liningnums{\arabic{section}}.\oldstylenums{\arabic{equation}}}
+
+% The Q.E.D. symbol was not showing up properly, forcing me to redefine it.
+% The reason turned out to be that the unicode-math package maps the
+% \qedsymbol command to a code point my font used for a different glyph.
+% This meant I got to research the history of the symbol and decide which
+% variant to use.
+%
+% Paul Halmos first introduced it to mathematics, and one name for it is
+% therefore the Halmos symbol.  In other contexts, it's called the tombstone.
+% Most of his papers scanned by Google do not in fact use the symbol, but his
+% text on measure theory uses a filled rectangle.  His autobiography says
+% it "sometimes looks like" an empty rectangle.  The festschrift _Paul Halmos:
+% Celebrating 50 Years of Mathematics_ uses an empty diamond.  The more recent
+% textbooks I checked used either the TeX-default empty square or a filled
+% square.
+% 
+% I therefore feel justified in using the Unicode character for Q.E.D. and
+% choosing its appearance by specifying a math font to take the glyph from.
+% XITS Math uses an attractive filled rectangle, as in Halmos' 1950 book on
+% measure theory and the 1997 edition of Donald Knuth's own _The Art
+% of Computer Programming_.
+\DeclareRobustCommand{\qedsymbol}{\ensuremath{\QED}}
+
+\endinput

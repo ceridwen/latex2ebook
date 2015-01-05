@@ -1,0 +1,47 @@
+\documentclass{minimal}
+\begin{document}
+%%%
+%
+\def\a{1}\def\b{1}  \if\a\b{\typeout{T1}}\else{\typeout{F1}}\fi
+% T1
+%
+\def\a{1}\def\b{0}  \if\a\b{\typeout{T2}}\else{\typeout{F2}}\fi
+% F2
+%
+\def\true{1}
+%
+\def\a{\true}\def\b{\true}  \if\a\b{\typeout{T3}}\else{\typeout{F3}}\fi
+% T3
+%
+\def\a{\true}\def\b{1}      \if\a\b{\typeout{T4}}\else{\typeout{F4}}\fi
+% T4
+%
+\def\a{\true}\def\b{0}      \if\a\b{\typeout{T5}}\else{\typeout{F5}}\fi
+% F5
+%
+%%%
+%
+\def\a{1}\def\b{1}  \ifx\a\b{\typeout{T6}}\else{\typeout{F6}}\fi
+% T6
+%
+\def\a{1}\def\b{0}  \ifx\a\b{\typeout{T7}}\else{\typeout{F7}}\fi
+% F7
+%
+\def\a{\true}\def\b{\true}  \ifx\a\b{\typeout{T8}}\else{\typeout{F8}}\fi
+% T8
+%
+\def\a{\true}\def\b{1}      \ifx\a\b{\typeout{T9}}\else{\typeout{F9}}\fi
+% F9
+%
+\def\a{\true}\def\b{0}      \ifx\a\b{\typeout{T10}}\else{\typeout{F10}}\fi
+% F10
+%
+%%%
+%
+\def\a{10}\def\b{10}  \if\a\b{\typeout{T11}}\else{\typeout{F11}}\fi
+% F11
+%
+\def\a{10}\def\b{10}  \ifx\a\b{\typeout{T12}}\else{\typeout{F12}}\fi
+% T12
+% 
+\end{document}

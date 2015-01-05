@@ -1,0 +1,106 @@
+% Copyright © 2012-2014 Loren B. Davis.  ALL RIGHTS RESERVED.
+
+% Prepared with LuaLaTeX in TeX Live 2013.  Also tested with XeLaTeX.
+
+\documentclass [11pt]{article}
+
+% \usepackage[paperwidth=3.6in,
+%             paperheight=4.8in,
+%             margin=0.125in,
+%             nohead,
+%             footskip=\baselineskip,
+%             includeheadfoot]{geometry}
+% \special{papersize=3.6in,4.8in}
+
+%% The xfrac package redefines \oldstylenums in a way that breaks fontspec, so
+%% include xfrac before fontspec:
+\usepackage{xfrac}
+\usepackage{graphicx}
+\usepackage{ellipsis}
+\usepackage[svgnames]{xcolor}
+
+\DeclareRobustCommand{\altcolor}{\color{NavyBlue}}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{xfrac}
+
+\usepackage{kindle_fonts}
+
+%% Display section numbers as lining, numbering within sections as oldstyle.
+\def\thesection{\liningnums{\arabic{section}}}
+\def\thesubsection{\liningnums{\arabic{section}}.\oldstylenums{\arabic{subsection}}}
+\numberwithin{equation}{subsection}
+\renewcommand{\theequation}{\thesubsection.\oldstylenums{\arabic{equation}}}
+
+\theoremstyle{plain}% default
+\newtheorem{Theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem*{Definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{Remark}{Remark}[subsection]
+
+% Differential operator, e.g. \d{x} \d{y}.
+\DeclareRobustCommand{\dwrt}[1]{\ensuremath\mathop{\mathrm{d}{#1}}}
+% Slash fractbions: (\sfrac from xfrac is a better replacement).
+% \DeclareRobustCommand{\slfrac}[2]{\left. {#1} \middle\fracslash {#2} \right.}
+% A | B
+\DeclareRobustCommand{\given}[2]{\left. {#1} \middle\vert {#2} \right.}
+% Absolute value
+% \DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\DeclareRobustCommand{\abs}[1]{\left\lvert {#1} \right\rvert}
+% Norm
+% \DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclareRobustCommand{\norm}[1]{\left\lVert {#1} \right\rVert}
+
+% App
+
+% End math macros.
+
+\newcommand{\testchar}{}
+\newcommand{\testhere}{\testchar \qquad \testchar}
+
+\title{Alphabet Test}
+\author{Loren B.\ Davis}
+\date{\oldstylenums{11} March \oldstylenums{2012}}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quæ ab illo inventore veritatis et quasi architecto beatæ vitæ dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magnidolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, \emph{qui dolorem ipsum quia dolor sit amet,} consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quærat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiæ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?\footnote{Cicero, \textit{De Finibus Bonorum et Malorum}, \textsection.\oldstylenums{10}.\oldstylenums{32}--\oldstylenums{33}.  From \texttt{http://www.lipsum.com/}. Emphasis added.}
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+\subsection{Testing}
+``Foo---barfly'' Th ff fi ffi fl ffl Qu tt 1\textsuperscript{st} \sfrac{1}{3} \(\sfrac{x}{3}\) \(\sfrac{\partial^2 x}{\partial t^2}\) \(\sfrac{\sum_{i=1}^n a_i}{n}\)
+
+\begin{Theorem}\label{thm:test}
+The theorem environments work in this template.
+
+\begin{proof}
+%%
+\begin{alignat*}{7}
+&\frac{\partial w}{\partial t} &= 0 \qquad
+&\frac{\partial x}{\partial t} &= 0 \qquad
+&\frac{\partial y}{\partial t} &= 0 \qquad
+&\frac{\partial z}{\partial t} = 0 \\
+&\frac{\partial^2 w}{\partial t^2} &\quad = \quad
+&\frac{\partial^2 x}{\partial t^2} &\quad = \quad
+&\frac{\partial^2 y}{\partial t^2} &\quad = \quad
+&\frac{\partial^2 z}{\partial t^2}
+\end{alignat*}
+%%
+\begin{equation}
+\int_{\mathbb{R}_{\pi_x}} 2t \dwrt{t} = t^2 + c \\ \label{eqn:test}
+\end{equation}
+%%
+Since \(t = x\), theorem \ref{thm:test} follows from equation \ref{eqn:test}.
+\end{proof}
+\end{Theorem}
+
+\[A \mathfrak{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathscr{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathbb{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+
+\end{document}

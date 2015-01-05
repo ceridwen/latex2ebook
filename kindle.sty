@@ -1,0 +1,37 @@
+\needsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{kindle}[2014/04/01 v0.1 Fonts and formatting for the Kindle]
+
+% PDF-specific formatting changes
+% These will work with both pdftex and luatex but not xetex 
+\RequirePackage{ifpdf}
+\ifpdf
+
+% Clears the header and footer, including the page numbers
+% Fancyhdr offers another way to do this.
+\pagestyle{empty}
+
+\@ifpackageloaded{geometry}{%
+  % Geometry is loaded, change options.
+  \geometry{paperwidth=3.6in,
+            paperheight=4.8in,
+            margin=0in,
+            onecolumn}
+}{%
+  % If geometry isn't loaded, load it.
+  \RequirePackage[paperwidth=3.6in,
+                  paperheight=4.8in,
+                  margin=0in,
+                  onecolumn]{geometry}
+}
+\else
+% tex4ht- or DVI-specific options would go here if there were any
+\if
+
+% Set fonts
+
+% Amsmath has to be loaded after stix and before mathastext
+\RequirePackage[T1]{fontenc}
+\RequirePackage[notext]{stix}
+\RequirePackage{droid}
+\RequirePackage{mathastext}

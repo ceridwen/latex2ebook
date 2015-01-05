@@ -1,0 +1,290 @@
+% Copyright © 2012-2014 Loren B. Davis.  ALL RIGHTS RESERVED.
+
+% Prepared with LuaLaTeX in TeX Live 2013.  Also tested with XeLaTeX.
+
+\RequirePackage[l2tabu,orthodox]{nag}
+\documentclass[10pt]{article}
+
+\usepackage[paperwidth=3.6in,
+            paperheight=4.8in,
+            margin=0.125in,
+            nohead,
+            footskip=\baselineskip,
+            includeheadfoot]{geometry}
+
+% \special{papersize=\the\paperwidth,\the\paperheight}
+% \pdfpageheight=4.8in
+% \pdfpagewidth=3.6in
+
+\usepackage{iftex}
+\ifXeTeX
+	\usepackage{xltxtra}
+	\usepackage{polyglossia}
+	\setmainlanguage[variant=us]{english}
+\else\ifLuaTeX
+	\usepackage{luatextra}
+	\usepackage[english]{babel}
+	\usepackage{lualatex-math}
+\else\ifPDFTeX
+	\usepackage{fixltx2e, metalogo}
+	\usepackage[english]{babel}
+\else
+%% Set up some defaults in case we compile this on some version of LaTeX
+%% other than LuaLaTeX or XeLaTeX, and which supports unicode-math.
+	\usepackage{fixltx2e, realscripts, metalogo}
+	\usepackage[english]{babel}
+\fi\fi\fi
+
+%% The xfrac package redefines \oldstylenums in a way that breaks fontspec, so
+%% include xfrac before fontspec:
+\usepackage{xfrac}
+\usepackage{graphicx}
+\usepackage{ellipsis}
+\usepackage{xcolor} % Perhaps set to the Gray model?
+
+\DeclareRobustCommand{\altcolor}{\color{darkgray}}
+
+\ifPDFTeX
+	\usepackage[T1]{fontenc}
+	\usepackage[utf8x]{inputenc} % Or [utf8] if this causes errors.
+	\usepackage{amssymb}
+	\usepackage{textcomp}
+%	\usepackage{tgtermes}
+	\usepackage{inconsolata}
+	\usepackage{tgheros}
+	\usepackage{tgadventor}
+%	\usepackage[notext,nomath]{stix}
+%% "With amsmath v2.14 or newer, it is recommended to load it (and/or packages
+%% that load it) after the stix package. Older versions of amsmath must be
+%% loaded before the stix package, otherwise errors will arise.
+	\usepackage{mathtools}
+	\usepackage{amsthm}	% Consider using ntheorem
+%% Let's see if these are compatible with tex4ht:
+	\usepackage[osf]{newtxtext}
+	\usepackage[varbb]{newtxmath}
+	\usepackage[scr=rsfso]{mathalfa}
+
+	\DeclareRobustCommand{\liningnums}[1]{\fontfamily{qtm}\selectfont {#1}}
+
+%	\DeclareRobustCommand{\uppi}{\ensuremath\mathrm\pi}
+
+	\DeclareRobustCommand{\titleface}{\rmfamily\bfseries\scshape}
+	\DeclareRobustCommand{\captionface}{\sffamily}
+	\DeclareRobustCommand{\labelfamily}{\fontfamily{qhv}\selectfont}
+	\DeclareRobustCommand{\headerfamily}{\sffamily}
+
+%% Removed because of an incompatibility between STIX and tex4ht:
+%	\DeclareRobustCommand{\qedsymbol}{\ensuremath{\QED}}
+	\DeclareRobustCommand{\qedsymbol}{\ensuremath{\blacksquare}}
+\else
+%% This is the preferred version:
+\usepackage{mathtools}
+\usepackage{amsthm}	% Consider using ntheorem
+%% Override most of these if using unicode math fonts:
+\usepackage{amssymb}
+
+\usepackage{fontspec}
+\usepackage[ math-style=ISO,
+             vargreek-shape=TeX,
+             slash-delimiter=frac
+           ]{unicode-math}
+\usepackage{newunicodechar}
+
+\defaultfontfeatures{ Ligatures=TeX,
+                      Scale=MatchLowercase }
+
+%% Lining numbers don’t quite work out of the box for some of these fonts;
+%% we must explicitly turn old-style numbers off.
+\DeclareRobustCommand{\liningnums}[1]{\addfontfeature{RawFeature=-onum,Numbers=Lining} {#1}}
+%% Enable old-style numbers as an OpenType font feature.
+\DeclareRobustCommand{\oldstylenums}[1]{\addfontfeature{RawFeature=-lnum,Numbers=OldStyle} {#1}}
+
+\setmainfont[ Numbers={Proportional},
+% \ifLuaTeX     Renderer=Basic,				\fi
+               Ligatures={Common, Rare, TeX},
+             ]{TeX Gyre Termes}
+
+% Gillius ADF No2 (a Gill Sans clone) is a good match for Palatino.  It does
+% not, however, come with small caps features.
+\setsansfont[ Ligatures={Common, TeX}
+            ]{Gillius ADF No2}
+% Alternatives:
+% \setsansfont[Ligatures={Common,TeX}]{Myriad Web Pro}
+% \setsansfont[Ligatures={Common,TeX}]{TeX Gyre Adventor}
+
+\setmonofont{Inconsolata}
+
+\setmathfont{XITS Math}
+
+%% The following are in the TeX Live distribution, and also good examples of
+%% how to select alternative alphabets.
+
+\setmathfont[ range={\mathcal,\mathbfcal},
+              Scale=MatchUppercase,
+              StylisticSet=1
+            ]{XITS Math}
+
+%\setmathfont[ range={\mathcal,\mathbfcal},
+%              Scale=MatchUppercase,
+%              Style=Alternate
+%            ]{Asana Math}
+
+\setmathfont[ range={\mathscr,\mathbfscr},
+              Scale=MatchUppercase,
+            ]{XITS Math}
+
+%% XITS Math actually supports a few additional math alphabets that
+%% unicode-math does not, through its stylistic sets.  Commands to use them
+%% could go here.
+
+\newfontface\titleface[ Letters=SmallCaps,
+                        Numbers={Proportional, Lining},
+% \ifLuaTeX               Renderer=Basic,				\fi
+                        Ligatures={Common, Rare, TeX}
+                      ]{TeX Gyre Termes Bold}
+\newfontface\captionface{Gillius ADF No2}
+\newfontfamily\labelfamily[ Numbers={Monospaced},
+% \ifLuaTeX                   Renderer=Basic,			\fi
+                            Scale=MatchUppercase]{TeX Gyre Heros}
+\newfontfamily\headerfamily[ Scale=MatchUppercase,
+%                             Numbers={Proportional, Lining}
+                           ]{Gillius ADF No2}
+%\newfontfamily\headerfamily{TeX Gyre Adventor}
+
+\setmathfont[range="220E, Scale=MatchUppercase]{XITS Math}
+\DeclareRobustCommand{\QED}{\ensuremath{\mathup\char"220E}}
+
+% The Q.E.D. symbol was not showing up properly, forcing me to redefine it.
+% The reason turned out to be that the unicode-math package maps the
+% \qedsymbol command to a code point my font used for a different glyph.
+% This meant I got to research the history of the symbol and decide which
+% variant to use.
+%
+% Paul Halmos first introduced it to mathematics, and one name for it is
+% therefore the Halmos symbol.  In other contexts, it's called the tombstone.
+% Most of his papers scanned by Google do not in fact use the symbol, but his
+% text on measure theory uses a filled rectangle.  His autobiography says
+% it "sometimes looks like" an empty rectangle.  The festschrift _Paul Halmos:
+% Celebrating 50 Years of Mathematics_ uses an empty diamond.  The more recent
+% textbooks I checked used either the TeX-default empty square or a filled
+% square.
+% 
+% I therefore feel justified in using the Unicode character for Q.E.D. and
+% choosing its appearance by specifying a math font to take the glyph from.
+% XITS Math uses an attractive filled rectangle, as in Halmos' 1950 book on
+% measure theory and the 1997 edition of Donald Knuth's own _The Art
+% of Computer Programming_.
+\DeclareRobustCommand{\qedsymbol}{\ensuremath{\QED}}
+
+\fi
+
+%% Microtype needs to be loaded after certain other packages, including
+%% inputenc, babel and fontspec.
+\usepackage[verbose]{microtype}
+
+% Really Euler:
+\DeclareMicrotypeAlias{NeoEuler}{eus}
+
+% \usepackage{breqn}
+
+\usepackage{fancyhdr}   % headers and footers
+\pagestyle{empty}
+\fancyhead{}            % clear page header
+\fancyfoot{}            % clear page footer
+
+\usepackage[sf, bf, medium, compact]{titlesec}      % customizing section titles
+% \titleformat{\section}{\headerfamily\bfseries\large}{}{0em}{}
+% \titleformat{\subsection}{\headerfamily\bfseries}{}{0em}{}
+\titleformat{\subsubsection}[runin]{\headerfamily\bfseries}{}{0em}{}
+\titlespacing{\subsubsection}{0pt}{5pt}{5pt}
+
+%% Display section numbers as lining, numbering within sections as oldstyle.
+\def\thesection{\labelfamily \liningnums{\arabic{section}}}
+\def\thesubsection{\labelfamily{\liningnums{\arabic{section}}.\oldstylenums{\arabic{subsection}}}}
+
+\titlelabel{\makebox[1cm][l]{\thetitle}}
+
+\usepackage[font=small,labelformat=simple]{caption}   % customizing captions
+\setlength{\abovecaptionskip}{2pt} % space above captions 
+\setlength{\belowcaptionskip}{0pt} % space below captions
+\setlength{\textfloatsep}{2pt}     % space between last top float or first bottom float and the text
+\setlength{\floatsep}{2pt}         % space left between floats
+\setlength{\intextsep}{2pt}        % space left on top and bottom of an in-text float
+
+\numberwithin{equation}{subsection}
+\renewcommand{\theequation}{\normalfont \liningnums{\arabic{section}}.\oldstylenums{\arabic{subsection}}.\oldstylenums{\arabic{equation}}}
+
+% End font selection.
+
+\theoremstyle{plain}% default
+\newtheorem{Theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem*{Definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{Remark}{Remark}[subsection]
+
+% Differential operator, e.g. \d{x} \d{y}.
+\DeclareRobustCommand{\dwrt}[1]{\ensuremath\mathop{\mathrm{d}{#1}}}
+% Slash fractions: (\sfrac from xfrac is a better replacement).
+% \DeclareRobustCommand{\slfrac}[2]{\left. {#1} \middle\fracslash {#2} \right.}
+% A | B
+\DeclareRobustCommand{\given}[2]{\left. {#1} \middle\vert {#2} \right.}
+% Absolute value
+% \DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\DeclareRobustCommand{\abs}[1]{\left\lvert {#1} \right\rvert}
+% Norm
+% \DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclareRobustCommand{\norm}[1]{\left\lVert {#1} \right\rVert}
+
+% App
+
+% End math macros.
+
+\newcommand{\testchar}{}
+\newcommand{\testhere}{\testchar \qquad \testchar}
+
+\title{\titleface Alphabet Test}
+\author{Loren B.\ Davis}
+\date{\oldstylenums{11} March \oldstylenums{2012}}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\section{Introduction}\label{sec:intro}
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quæ ab illo inventore veritatis et quasi architecto beatæ vitæ dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magnidolores eos qui ratione voluptatem sequi nesciunt. Neque porro quis\-quam est, \emph{qui dolorem ipsum quia dolor sit amet,} consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quærat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit labor\-ios\-am, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiæ consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?\footnote{Cicero, \textit{De Finibus Bonorum et Malorum}, \textsection \liningnums{1}.\oldstylenums{10}.\oldstylenums{32}--\oldstylenums{33}.  From \texttt{http://www.lipsum.com/}. Emphasis added.}
+
+\subsection{Testing}
+``Foo---barfly'' Th ff fi ffi fl ffl Qu tt 1\textsuperscript{st} \sfrac{1}{3} \(\sfrac{x}{3}\) \(\sfrac{\partial^2 x}{\partial t^2}\) \(\sfrac{\sum_{i=1}^n a_i}{n}\)
+
+\begin{Theorem}\label{thm:test}
+The theorem environments work in this template.
+
+\begin{proof}
+%%
+\begin{alignat*}{7}
+&\frac{\partial w}{\partial t} &= 0 \qquad
+&\frac{\partial x}{\partial t} &= 0 \qquad
+&\frac{\partial y}{\partial t} &= 0 \qquad
+&\frac{\partial z}{\partial t} = 0 \\
+&\frac{\partial^2 w}{\partial t^2} &\quad = \quad
+&\frac{\partial^2 x}{\partial t^2} &\quad = \quad
+&\frac{\partial^2 y}{\partial t^2} &\quad = \quad
+&\frac{\partial^2 z}{\partial t^2}
+\end{alignat*}
+%%
+\begin{equation}
+\int_{\mathbb{R}_{\uppi_x}} 2t \dwrt{t} = t^2 + c \\ \label{eqn:test}
+\end{equation}
+%%
+Since \(t = x\), theorem \ref{thm:test} follows from equation \ref{eqn:test}.
+\end{proof}
+\end{Theorem}
+
+\[A \mathfrak{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathscr{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathbb{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+
+\end{document}

@@ -1,0 +1,1622 @@
+\documentclass[12pt]{article}
+
+\usepackage[sc,osf]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\begin{document}
+
+% \lstset{language=LaTeX}
+
+\section{Logical structure}
+\label{sec:logical_structure}
+
+There are two basic plausible methods for creating documents from
+\LaTeX that I can view on my Kindle:
+
+1) Use tex4ht to generate XHTML that I then convert into a KF8/AZW3
+ebook with either kindlegen or Calibre (ebook-convert).  Kindle has
+SVG support since version 3 in KF8/AZW3 files, and my Kindle Keyboard
+is version 3, so there's no reason to use raster images for equations.
+
+2) Use layout options in \LaTeX and pdflatex/xelatex/lualatex to create
+a PDF sized to my Kindle's screen dimensions with fonts embedded into
+the PDFs to handle the equations.
+
+
+\subsection{Fonts}
+\label{sec:fonts}
+
+To get legible equations, I'll need some kind of ability to force
+equations into a font and size designed for display on my Kindle.
+Using standard fonts and sizes produces equations that range from
+completely illegible to marginally legible.  For this purpose, the
+AZW3 and PDF approaches are morally equivalent because in both cases
+they should create output that will display in identical ways on my
+Kindle: in the AZW3, they'll be represented by SVGs with fonts
+converted to paths, and in the PDF, by embedded fonts, but they should
+look the same.
+
+In terms of font selection, my Kindle Keyboard has the same screen
+dimensions as the Kindle 2, so it's very likely that the font sizes
+for the Kindle 2 and the Kindle Keyboard are the same.
+
+``For the Kindle 2, the key information is this (from Amazon itself) -
+There are 6 font sizes, which correspond approximately to the following Microsoft Word standard font sizes -
+Kindle Font Size 1 = 7pt
+Kindle Font Size 2 = 9pt
+Kindle Font Size 3 = 11 pt
+Kindle Font Size 4 = 14 pt
+Kindle Font Size 5 = 17 pt
+Kindle Font Size 6 = 20 pt
+
+The video should help clear up exactly what the Kindle 2 font sizes are. You can look at the appropriate font sizes in Word on your PC to get a better idea.
+Form the video we can tell that the Kindle 2 Font Sizes actually correspond to -
+Kindle Font Size 1 = A little bit less than 7pt (actually a tiny bit less).
+Kindle Font Size 2 = Between 8pt and 9pt - closer to 9pt.
+Kindle Font Size 3 = Between 10pt and 11 pt, closer to 11 pt.
+Kindle Font Size 4 = Slightly less than 14 pt.
+Kindle Font Size 5 = A bit less than 17pt.
+Kindle Font Size 6 = 20 pt (a tiny bit less than 20 pt).''(This quote
+from
+\url{http://ireaderreview.com/2009/12/22/kindle-font-size-kindle-2-dx-font-size}.  The information from Amazon is at
+\url{http://www.amazon.com/Kindle-answers-from-team-Amazon/forum/FxBVKST06PWP9B/Tx1KSCVDTUJVMWO/1/ref=cm_cd_ef_tft_tp?_encoding=UTF8&cdAnchor=B000FI73MA&asin=B000FI73MA})
+
+In reader.pref, the default is FONT_SIZE=21.  This is probably also be
+measured in pixels (see my discussion in \ref{sec:pdf}).
+
+\url{%
+http://www.mobileread.mobi/forums/showthread.php?t=189717
+}
+
+This thread gets off-track but the brief summary is that by
+decompiling the Java, ixtab found a definition
+found a definition
+\begin{lstlisting}
+  "font.menu.size.list", new int[][] { new int[] { 17, 19, 21, 25, 31, 36, 60, 86 } }
+\end{lstlisting}
+``com.amazon.ebook.booklet.reader.resources.ReaderRe'' on the Kindle
+4.  They later found another definition
+\begin{lstlisting}
+  fontmenu.default.font.size.list ("17, 18, 21, 25, 31, 36, 60,
+86")
+\end{lstlisting}
+in ``com.amazon.ebook.framework.resources.UIResources (in
+opt/amazon/ebook/lib/framework-api.jar)'' on the Kindle DX, which
+matched ihor's testing of the values for the Aa key.  Later ihor said
+that on other forums people said the patch works on the Kindle
+Keyboard.  On the next-to-last page there's a hack that alters several
+kinds of things I'm interested in, with the following defaults:
+\begin{lstlisting}
+  # User font size for Reader Booklet
+FONT_LETTER=A
+FONT_SIZES=20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36
+# User AZW margins for Reader Booklet
+MOBI_TOP_MARGIN=20
+MOBI_HORIZONTAL_MARGINS=30,20,10
+# User PDF margins for Reader Booklet
+PDF_TOP_MARGIN=0
+PDF_HORIZONTAL_MARGINS=0
+\end{lstlisting}
+Unfortunately, all the code is modified so I don't know what the
+original Kindle defaults are, though if I decompiled the Java myself
+it might help me find the right variables.
+
+Unfortunately, converting 21 and the other values into typographic
+points using the Kindle's resolution and screen size doesn't seem to
+give numbers that line up with the font sizes---21 should be 9.1pt,
+not \approx 11 pt.  Weirdly, the numbers are closer if I assume
+everything is offset by 1, though there's still no close
+correspondence.
+
+
+\url{https://graphicdesign.stackexchange.com/questions/11372/what-fonts-are-ideal-for-e-ink-displays}
+
+Also mentions some pricey commercial newspaper fonts.
+
+``Some fonts typically seen on E-Ink devices are Times, Palatine, Plantin, Sabon, Georgia, Gill Sans, and Rockwell.''
+
+\url{http://mademers.com/globalindieauthor/2013/03/best-fonts-for-kindle}/
+
+``The fonts licensed by Kindle and included in the Fire are:
+
+Georgia
+Caecilia
+Trebuchet
+Verdana
+Arial
+Times New Roman
+Courier
+Lucida (of which there are several and the one in Kindle appears to be
+Sans Unicode)''
+
+``The new Kindle Paperwhite offers users the option to select:
+
+Caecilia
+Caecilia Condensed
+Baskerville
+Futura
+Helvetica
+Palantino''
+
+\url{%
+http://forrestmedia.org/2014/01/23/typeface-study-pmn-caecilia/
+}
+
+``Caecilia takes the smoothness of a clarendon one step further by introducing humanist variety to the thickness of its strokes. Because of this, it has been called the first-ever “neo-humanist slab”. Fonts such as Archer and Museo Slab have since built on the humanist legacy of Caecilia.''
+
+\url{
+  http://faculty.washington.edu/cadolph/?page=60
+}
+
+In caxetex.pdf Adolph suggests Bembo and Gill Sans as humanist fonts
+that go well with Caecilia.
+
+\url{
+https://tex.stackexchange.com/questions/103513/is-the-bembo-font-or-a-close-equivalent-available-for-latex
+}
+
+This thread gives suggestions for free fonts that work with \LaTeX
+that might serve as good replacements for Bembo and thus match Caecilia.
+
+
+Best font comparisons:
+
+\url{%
+  http://www.tug.dk/FontCatalogue/%
+}
+
+Contains many (but not all) fonts available for \LaTeX.
+
+\url{%
+  http://jf.burnol.free.fr/showcase.html
+}
+
+Contains OT/TT and Type 1 fonts, including fonts not listed anywhere
+else that I didn't even know were available for \LaTeX like Droid.
+Associated with the mathastext package.
+
+\url{%
+  http://maverick.inria.fr/~Nicolas.Holzschuch/texmath.html
+}
+
+Comparison of the Unicode/OT math fonts.
+
+\url{
+http://tug.ctan.org/info/Free_Math_Font_Survey/survey.html
+}
+
+Comparisons of the various math fonts that explain where they're
+getting the math fonts from.
+
+
+Starting fonts:
+
+Unlike a lot of text fonts, Droid has Greek letters I can use with
+mathastext to keep a more consistent letter style between the body
+text and the equations.  I'll use STIX/XITS for the math symbols and
+Droid for the text.  For tex4ht, Caecilia and Droid aren't really
+consistent, but there isn't any math font that's directly designed to
+go with Caecilia.  If I had a Kindle Paperwhite, it has fonts that
+have LaTeX analogs with math font support, but I don't.
+
+
+Some more notes on fonts for experimentation:
+
+Asana and XITS are the best Unicode/OT math fonts.
+
+Of the Font Catalogue fonts, the best text fonts look to me like
+Antiqua, Bitstream Charter (also called Charter BT, packaged with the
+MathDesign fonts), Computer Concrete, DejaVu Serif (these expand the
+Vera fonts basically), Droid Serif, New Century Schoolbook/TeX Gyre
+Schola, the other TeX Gyre fonts, and Utopia.  I tried to pick fonts
+that were legible not only because they were big but also because of
+good letter design.  For math fonts, a lot of packages mix one of the
+few sets of math fonts with different text fonts.  STIX, TX Fonts,
+Palatino, and other Times-like math fonts look similar.  Of the
+Times-like fonts, I prefer STIX because it has the best symbol
+coverage.  New Century Schoolbook uses Fourier as its math font.
+Utopia has a choice between Fourier and MathDesign.  Arev Sans uses
+MathDesign bold for most math symbols and a mix of other fonts for the
+rest of math.  Bitstream Charter (Charter BT) has a MathDesign font
+specifically designed to be paired with it.
+
+Other slab-serif \LaTeX fonts are Computer Concrete (variation on
+Computer Modern), which is meant to be paired with the Euler math
+font, and Charter.  All typefaces based on Bitstream Vera, which
+include Bera, Arev Sans, and DejaVu, probably count as slab-serif as
+well.  CH Math fonts are slab-serif math fonts designed to go with
+Bitstream Charter, as well.
+
+
+\subsection{Images}
+\label{sec:images}
+
+The \LaTeX Wikibook (\url{%
+  https://en.wikibooks.org/wiki/LaTeX/Importing_Graphics#Supported_image_formats% 
+}) claims the latex compiler only supports EPS while pdflatex supports
+JPEG, PNG, PDF, and EPS (Apparently it used to not support EPS,
+requiring EPS -> PDF conversion.  Does it just do this internally
+now?).  I believe that luatex and xetex support the same image
+formats.  (Does anything support GIFs?)  These are the two primary
+compilers, latex in the old days and pdflatex now, so I'm going to
+assume to start that arXiv papers will have graphics in one of these
+formats.  pdflatex thus ought to be able to directly include all the
+graphics I'll find in the arXiv, but it is almost certain that the
+figures will require rescaling because the Kindle's screen dimensions
+are different than pdflatex's defaults.  This code will likely be
+something I want to share between the two approaches, though XHTML has
+very different, and probably for these purposes better, image
+handling.
+
+For the AZW3 route, the only available vector graphic format is SVG.
+EPS, PS, and PDF all support both raster and vector graphics, so I'm
+going to try to send them to SVG and hope the converters can handle
+that.  JPEG and PNG are both rasters.  Converting JPEG to PNG in
+general doesn't make any sense because information is already lost,
+there will be no further editing done by my script, and it will
+probably increase the file size.  There are some cases where JPEG has
+been inappropriately used for a diagram or some such where conversion
+to a PNG with a limited number of colors would produce a better image
+(\url{https://en.wikipedia.org/wiki/Wikipedia:How_to_reduce_colors_for_saving_a_JPEG_as_PNG}),
+but these cases can't be automatically detected.  Some old MOBI
+viewers only support JPEGs (according to Calibre's documentation at
+\url{http://manual.calibre-ebook.com/cli/ebook-convert.html#mobi-output-options})
+so there's an argument for converting everything to JPEG, but JPEG is
+lossy and not well-optimized for diagrams and graphs because of its
+color-blending, and my Kindle is not so old it can't handle the other
+formats.  According to Amazon
+(\url{https://kdp.amazon.com/help?topicId=A1B6GKJ79HC7AN}), Kindles
+can display GIF, PNG, BMP, and JPEG.  Thus, there's no reason to
+convert the raster formats PNG and JPEG, I just need to pass them
+through and make sure htlatex links them in the final XHTML, since
+htlatex calls latex and the latex compiler doesn't support PNG or
+JPEG, and Calibre includes them in the ebook file.  Compare
+Wikipedia's policies on images
+(\url{https://en.wikipedia.org/wiki/Wikipedia:Image_use_policy#Format}):
+they prefer SVG first and then PNG for diagram-like images and
+software screenshots.  They prefer photos, scanned images, and video
+screenshots in JPEG.
+
+One major graphics issue that I haven't even begun to touch involves
+packages like pstricks and tikz that people use for diagrams.
+Pstricks \emph{does not work} with pdftex or luatex (\url{
+https://www.tug.org/PSTricks/main.cgi/
+}: ``You cannot run your files with pdftex/pdflatex/luatex/lualatex, use xetex/xelatex instead or the sequence latex->dvips->ps2pdf''
+
+Tikz is more flexible and should work with pdftex and the others, but
+I know people have experienced trouble getting it to work with tex4ht
+in the past.
+
+
+\subsection{PDF layout}
+\label{sec:pdf}
+
+For some ideas and starting points, see \url{
+  https://tex.stackexchange.com/questions/16735/latex-options-for-kindle
+}.
+
+I measured the actual margins on my Kindle Keyboard.  For PDFs with
+margins set to zero in \LaTeX, the bottom is slightly less than 5/16
+inch (\approx 50 px) (including the page number and progress bar), 1/8
+inch (\approx 20 px) everywhere else.  For the ebooks, the default
+margins are slightly less than 1/4 an inch on the left and right,
+slightly less than 5/16 (\approx 50 px) on the bottom (including the
+page number et al.), about 3/16 (\approx 30 px) between the text and
+the ebook/Kindle information (title, wifi, battery), and slightly less
+than 7/16 (\approx 70 px) inch between the text and the top of the
+screen.  (This information isn't displayed above PDFs.)  The length of
+the position bar in both modes is 3.125 inches.  In ebook mode, the
+text is aligned above the progress bar, indicating the actual left and
+right margins are something like (3.6 - 3.125)/2 = .475/2 = .2375 =
+19/80 inches (\approx 40 px).  As expected, this is just slightly less
+than 1/4 inch.  Measured in mm, the default horizontal margins are
+almost exactly 6 mm, and the others are proportionately larger.
+
+For the default margins, there's a key HORIZONTAL_MARGIN=40 in
+reader.pref.  For ``fewest words per line,'' the margins are between
+11/16 and 3/4 an inch, and reader.pref HORIZONTAL_MARGIN=120.  For
+``fewer words per line,'' the margins are between 1/2 and 7/16 an
+inch, and the presumptive (I haven't checked!)  reader.pref
+HORIZONTAL_MARGIN=80.  The Kindle Keyboard's screen resolution is
+600x800 (167 dpi).  Doing the math, 40/167 inches ~ .240 inches ~ .608
+cm.  This strongly suggests that the units in reader.pref are pixels.
+
+
+\section{Program flow}
+\label{sec:program_flow}
+
+While I started with the arxiv2mobi script, it's definitely not
+well-constructed.  Starting with the code from \url{%
+  https://bitbucket.org/nye17/kindlize%
+} is almost certain to be a better choice because it's better-written
+and already handles some of the functions that I was going to have to
+write.  The abstract program flow is as follows.
+
+\begin{enumerate}
+\item Use the arXiv API to get the requested paper's metadata and the
+link to the source.
+
+\url{http://export.arxiv.org/api/query?search_query=ti:no+AND+ti:discreteness}
+
+\item Download the source.
+
+\item Do the necessary unpacking and for some papers preprocessing of
+  image and \LaTeX files (.cls, .sty, etc.).
+
+\item Apply \LaTeX-level changes for fonts, graphics, and pdf-specific
+  formatting.  
+
+\item[5a] Call the Makefile that calls htlatex and Calibre or kindlegen.
+
+\item[5b] Call pdflatex or xelatex or lualatex.
+
+\item Do post-processing and clean-up.
+\end{enumerate}
+
+
+\section{Stuff to write}
+\label{sec:stuff_to_write}
+
+
+\subsection{\LaTeX fonts}
+\label{sec:latex_fonts}
+
+kindle.sty: This file needs to have at least two and maybe three
+sections: a block with modifications that apply to both the tex4ht and
+PDF routes, a block enclosed in ifpdf that applies pdf-specific
+formatting changes, and an ifluatex/ifxetex/ifpdftex block with
+experimental OpenType font support.  The section that applies to
+everything has to include the math font definitions and possibly
+image-resizing (if that doesn't have to be specialized for each
+route).  The section that applies to PDF output has to contain the
+geometry package to change the paper size, eliminate headers and
+footers, reduce spacing, do something about footnotes, make sure the
+Kindle doesn't automatically resize the PDFs producing inconsistent
+output, and so on.
+
+The third experimental luatex/xetex/pdftex section would basically
+involve support for TrueType/OpenType fonts.  The arXiv automatically
+processes its submissions (\url{%
+  http://arxiv.org/help/submit_tex }) and doesn't support xetex or
+luatex, so arXiv submissions by definition can't include xetex or
+luatex features and thus the only reason I would use them in place of
+pdftex is for features \emph{I} need.  As far as I know, better font
+support is the only such feature not available in pdftex.  Wait,
+there's another feature I might need: luatex and xetex both have 65536
+math alphabets!  Note that fontspec, the package that does a lot of
+font handling for OT/TT fonts, doesn't work with tex4ht, so even
+though tex4ht is theoretically compatible with xetex there's nothing
+that I want from xetex that's compatible with tex4ht; and luatex and
+tex4ht are not compatible in the first place.  Thus, luatex and xetex
+would only be useful when compiling to pdf.  pdftex and luatex can
+both compile directly to pdf and thus the ifpdf package affects them.
+xetex only compiles to dvi and uses dvi2pdf (IIRC) to go to pdf, so if
+I wanted to support it I'd have to create a separate xetex block that
+duplicates everything in the ifpdf block.  One other issue with xetex
+is that it uses some kind of extended .dvi file (extension .xdv) as
+output, and I don't know how tools like dvisvgm will work with those
+files.
+
+(Some discussion of ConTeXt at \url{%
+https://tex.stackexchange.com/questions/3094/drawbacks-of-xetex-luatex
+} indicates it also supports OpenType math fonts.)
+
+The first draft is due to Loren Davis, but needs substantial
+refactoring and simplification.
+
+Had to install texlive-lang-greek to get lgrcmr.fd and avoid a NFSS error.
+
+\begin{lstlisting}
+No file LGRcmr.fd.
+
+! LaTeX Error: This NFSS system isn't set up properly.
+\end{lstlisting}
+
+Loren: ``I suspect that's the source of the default \mathup Greek
+alphabet.''
+
+too many math alphabets
+stix + droid/mathastext
+(0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
+(1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
+(2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
+(3: \LS2/stixex/m/n/12 = stix-mathex at 12.0pt)
+(4: \LS1/stix/b/n/12 = stix-mathrm-bold at 12.0pt)
+(5: \LS1/stixfrak/m/n/12 = stix-mathfrak at 12.0pt)
+(6: \LS1/stixbb/m/n/12 = stix-mathbb at 12.0pt)
+(7: \LS1/stixbb/m/it/12 = stix-mathbbit at 12.0pt)
+(8: \LS2/stixcal/m/n/12 = stix-mathcal at 12.0pt)
+(9: \LS1/stixsf/m/n/12 = stix-mathsf at 12.0pt)
+(10: \LS1/stixsf/m/it/12 = stix-mathsfit at 12.0pt)
+(11: \LS2/stixtt/m/n/12 = stix-mathtt at 12.0pt)
+(12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+
+newpxmath + droid/mathastext
+(0: \T1/cmr/m/n/12 = ecrm1200 [operators])
+(1: \OML/npxmi/m/it/12 = zplmi at 12.0pt [letters])
+(2: \OMS/npxsy/m/n/12 = zplsy at 12.0pt [symbols])
+(3: \OMX/npxex/m/n/12 = zplex at 12.0pt [largesymbols])
+(4: \U/npxmia/m/it/12 = zplmia at 12.0pt [lettersA])
+(5: \U/npxsya/m/n/12 = zplsya at 12.0pt [AMSa])
+(6: \U/npxsyb/m/n/12 = zplsyb at 12.0pt [AMSb])
+(7: \U/npxsyc/m/n/12 = zplsyc at 12.0pt [symbolsC])
+(8: \U/npxexa/m/n/12 = zplexa at 12.0pt [largesymbolsA])
+(9: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(10: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(11: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(12: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+(13: \T1/fdr/b/n/12 = DroidSerif-Bold-t1 at 12.0pt)
+(14: \nullfont = nullfont)
+(15: \nullfont = nullfont)
+
+no errors
+stix + droid/[defaultbf]mathastext
+(0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
+(1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
+(2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
+(3: \LS2/stixex/m/n/12 = stix-mathex at 12.0pt)
+(4: \LS1/stix/b/n/12 = stix-mathrm-bold at 12.0pt)
+(5: \LS1/stixfrak/m/n/12 = stix-mathfrak at 12.0pt)
+(6: \LS1/stixbb/m/n/12 = stix-mathbb at 12.0pt)
+(7: \LS1/stixbb/m/it/12 = stix-mathbbit at 12.0pt)
+(8: \LS2/stixcal/m/n/12 = stix-mathcal at 12.0pt)
+(9: \LS1/stixsf/m/n/12 = stix-mathsf at 12.0pt)
+(10: \LS1/stixsf/m/it/12 = stix-mathsfit at 12.0pt)
+(11: \LS2/stixtt/m/n/12 = stix-mathtt at 12.0pt)
+(12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+
+too many math alphabets
+stix + droid/[defaultit]mathastext
+(0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
+(1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
+(2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
+(3: \LS2/stixex/m/n/12 = stix-mathex at 12.0pt)
+(4: \LS1/stix/b/n/12 = stix-mathrm-bold at 12.0pt)
+(5: \LS1/stixfrak/m/n/12 = stix-mathfrak at 12.0pt)
+(6: \LS1/stixbb/m/n/12 = stix-mathbb at 12.0pt)
+(7: \LS1/stixbb/m/it/12 = stix-mathbbit at 12.0pt)
+(8: \LS2/stixcal/m/n/12 = stix-mathcal at 12.0pt)
+(9: \LS1/stixsf/m/n/12 = stix-mathsf at 12.0pt)
+(10: \LS1/stixsf/m/it/12 = stix-mathsfit at 12.0pt)
+(11: \LS2/stixtt/m/n/12 = stix-mathtt at 12.0pt)
+(12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+
+no errors
+stix + droid/[defaultit,defaultbf]mathastext
+(0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
+(1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
+(2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
+(3: \LS2/stixex/m/n/12 = stix-mathex at 12.0pt)
+(4: \LS1/stix/b/n/12 = stix-mathrm-bold at 12.0pt)
+(5: \LS1/stixfrak/m/n/12 = stix-mathfrak at 12.0pt)
+(6: \LS1/stixbb/m/n/12 = stix-mathbb at 12.0pt)
+(7: \LS1/stixbb/m/it/12 = stix-mathbbit at 12.0pt)
+(8: \LS2/stixcal/m/n/12 = stix-mathcal at 12.0pt)
+(9: \LS1/stixsf/m/n/12 = stix-mathsf at 12.0pt)
+(10: \LS1/stixsf/m/it/12 = stix-mathsfit at 12.0pt)
+(11: \LS2/stixtt/m/n/12 = stix-mathtt at 12.0pt)
+(12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+
+no errors
+stix + droid/[defaultit,defaultbf,defaultsf]mathastext
+(0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
+(1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
+(2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
+(3: \LS2/stixex/m/n/12 = stix-mathex at 12.0pt)
+(4: \LS1/stix/b/n/12 = stix-mathrm-bold at 12.0pt)
+(5: \LS1/stixfrak/m/n/12 = stix-mathfrak at 12.0pt)
+(6: \LS1/stixbb/m/n/12 = stix-mathbb at 12.0pt)
+(7: \LS1/stixbb/m/it/12 = stix-mathbbit at 12.0pt)
+(8: \LS2/stixcal/m/n/12 = stix-mathcal at 12.0pt)
+(9: \LS1/stixsf/m/n/12 = stix-mathsf at 12.0pt)
+(10: \LS1/stixsf/m/it/12 = stix-mathsfit at 12.0pt)
+(11: \LS2/stixtt/m/n/12 = stix-mathtt at 12.0pt)
+(12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+
+no errors
+stix + droid/[defaultit,defaultbf,defaultsf,defaulttt]mathastext
+(0: \LS1/stix/m/n/12 = stix-mathrm at 12.0pt)
+(1: \LS1/stix/m/it/12 = stix-mathit at 12.0pt)
+(2: \LS1/stixscr/m/n/12 = stix-mathscr at 12.0pt)
+(3: \LS2/stixex/m/n/12 = stix-mathex at 12.0pt)
+(4: \LS1/stix/b/n/12 = stix-mathrm-bold at 12.0pt)
+(5: \LS1/stixfrak/m/n/12 = stix-mathfrak at 12.0pt)
+(6: \LS1/stixbb/m/n/12 = stix-mathbb at 12.0pt)
+(7: \LS1/stixbb/m/it/12 = stix-mathbbit at 12.0pt)
+(8: \LS2/stixcal/m/n/12 = stix-mathcal at 12.0pt)
+(9: \LS1/stixsf/m/n/12 = stix-mathsf at 12.0pt)
+(10: \LS1/stixsf/m/it/12 = stix-mathsfit at 12.0pt)
+(11: \LS2/stixtt/m/n/12 = stix-mathtt at 12.0pt)
+(12: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(13: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(14: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(15: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+
+other errors
+[nomath]stix + droid/mathastext
+(0: \OT1/cmr/m/n/12 = cmr12)
+(1: \OML/cmm/m/it/12 = cmmi12)
+(2: \OMS/cmsy/m/n/12 = cmsy10 at 12.0pt)
+(3: \OMX/cmex/m/n/6 = cmex10)
+(4: \T1/fdr/m/n/12 = DroidSerif-Regular-t1 at 12.0pt)
+(5: \T1/fdr/m/it/12 = DroidSerif-Italic-t1 at 12.0pt)
+(6: \LGR/fdr/m/it/12 = DroidSerif-Italic-lgr at 12.0pt)
+(7: \LGR/fdr/m/n/12 = DroidSerif-Regular-lgr at 12.0pt)
+(8: \T1/fdr/b/n/12 = DroidSerif-Bold-t1 at 12.0pt)
+(9: \nullfont = nullfont)
+(10: \nullfont = nullfont)
+(11: \nullfont = nullfont)
+(12: \nullfont = nullfont)
+(13: \nullfont = nullfont)
+(14: \nullfont = nullfont)
+(15: \nullfont = nullfont)
+
+
+\subsection{PDF setup}
+\label{sec:latex_pdf}
+
+
+
+
+
+\subsection{TeX4ht Fonts (finished for now)}
+\label{sec:tex4ht_fonts}
+
+*stix*.htf, generate-htf.py, stix-aliases.py: TeX4ht has a weird font
+system that Gurari called ``virtual hypertext fonts,''contained in
+files with the extension .htf, documented (poorly) at
+\url{%
+https://www.tug.org/applications/tex4ht/mn-htf.html
+} .  These are
+lists of characters (not glyphs) in a corresponding TeX font, plus
+some additional elements that set CSS font properties like bold,
+italic, etc.  Since HTML doesn't have provisions for forcing specific
+glyphs, their purpose seems to be to allow tex4ht to transform the
+glyphs in the .dvi file into characters for the HTML, possibly with
+some additional generalized font information from the CSS commands.
+This means that browsers (and ebook readers) will display
+tex4ht-generated HTML using default fonts, possibly modified by
+characters like italic, bold, etc.  The Kindle Keyboard typesets all
+text in Caecilia
+(\url{http://mademers.com/globalindieauthor/2013/03/best-fonts-for-kindle/}),
+so it doesn't matter what text font I pick at all for the ebook
+version.
+
+Because I want to use math fonts that Gurari hasn't already created
+.htf files for, I had to make them myself.  This turned out to be
+something of an adventure, and I went down several blind alleys in the
+process, but method that worked was to use the FontForge Python
+extension documented here \url{http://fontforge.org/python.html} to
+find out the Unicode code points for the characters corresponding to
+glyphs in a given Type 1 font's Postscript Font Binary file and, when
+necessary, to first apply the encoding that determines which glyphs
+get used.  This is generate\_htf.py.  The way that Type 1 fonts work
+is... complicated, to say the least, and the various files involved
+are not well documented.  In figuring out the basic process and the
+file formats, I used
+\url{%
+https://tex.stackexchange.com/questions/119467/how-latex-makes-use-of-font-related-files-i-e-fd-map-enc-def-etc-whe
+}
+to get an overview of the procedure; and the Dvips manual's section on
+Postscript fonts
+(\url{%
+https://www.tug.org/texinfohtml/dvips.html#PostScript-fonts
+}),
+especially 6.1.4 on encodings, 6.3.1.5 on the encoding file format,
+and 6.4 on the .map file, to figure out the formats for the map and
+the encoding files.  Since FontForge handles the encoding files, I
+didn't need to understand the format in detail, but I did need to
+understand their role in the process.  The .map file has lines like,
+
+\begin{lstlisting}
+stix-mathrm        STIXMath-Regular              <stix-mathrm.pfb
+stix-extra1      STIXGeneral-Regular ``stixextra  ReEncodeFont''<stix-extra1.enc <STIXGeneral-Regular.pfb
+\end{lstlisting}
+
+The <s indicate input files to be read.  (I've also seen examples where the
+.enc file is preceded by a <[.)
+
+I set generate\_htf.py to assign characters without a Unicode code
+point (those that FontForge returns -1 on) to the character class '1',
+which (if I understand correctly) should cause tex4ht to create an
+image for those characters.  While this is sufficient in general, for
+my particular project, I'd want to do it for all characters that my
+Kindle Keyboard doesn't support, Unicode or otherwise, \emph{if} I had
+a list of such characters.  Checking the Unicode test file from
+\url{http://freekindlebooks.org/Unicode/unicode.html} on my Kindle
+indicates that it actually \emph{does} display a lot of the math
+symbols with Unicode code points
+
+% To create .htf files for all the STIX fonts without standard
+% encodings, I used the following command to process stix.map into a
+% list of files that I then fed to my script:
+
+% \begin{lstlisting}
+% cut -d "<" -s -f 2-3 --output-delimiter " " stix.map | uniq | grep -v -P "[Bb]old" | grep -v italic | grep -v -P "ts?[12]" | perl -lpe '$_ = "-e " . $_ if /enc/' | xargs -L 1 ~/linux/latex/kindle_arxiv/htfs/generate_htf.py
+% \end{lstlisting}
+
+tex4ht also accepts aliases to other .htf files in lieu of a list of
+characters.  I created a module aliases.py with two utility functions,
+alias() and parse_map(); parse_map() extracts information about which pfbs
+are being encoded with which encodings while alias() links to another
+.htf for fonts with standard encodings and adds CSS font properties.  
+
+The four STIX text fonts have standard encodings, OT1, OT2, T1, and
+TS1.  I found fonts that shared the same encodings in the \LaTeX Font
+Encodings guide (\url{tug.ctan.org/macros/latex/doc/encguide.pdf}) and
+wrote a script that used alias() to create .htf files with aliases to
+.htf files that Gurari provided for those encodings.  For the math
+fonts, I used generate\_htf to create character lists for each math
+font.  The math fonts have one important special case: some italics
+variations on other math fonts, like stix-mathit and stix-mathsfit,
+have different symbols in their character tables from their
+non-italics versions, like stix-mathrm and stix-mathsf, so I had to
+generate .htf file with characters for the italics fonts as well.
+
+I also used alias() to add lines to the end of the files assigning
+appropriate CSS font properties to the math fonts and aliasing the
+-bold versions in the non-bold .htfs.  Loren Davis helped me figure
+out which properties to assign to which fonts in the non-obvious
+cases:
+
+``The main STIX fonts are serif and none of the other things.
+ot1-stixgeneralsc is small-caps.
+So are the other variants ending in sc.
+stix-mathrm is Roman (i.e. serif).
+stix-mathit is italic.
+stix-mathsf is sans serif.
+stix-mathsfit is sans-serif and italic.
+Most of the characters in stix-mathtt are monospaced, but the non-letter slots are used for symbols that aren't.
+stix-mathbb might arguably count as Fantasy.
+stix-mathbbit is also italic.
+stix-mathscr is cursive.
+And arguably italic.
+stix-mathcal is cursive.
+I'm not sure how you would classify stix-mathfrak.''
+
+The only non-obvious choices I made were to assign mathscr and mathcal
+as cursive and both mathbb and mathbb-bold as bold.  I had to make one
+final change because of a problem in the STIX fonts: as can be seen
+from the STIX font's documentation and the OT2 table in the \LaTeX Font
+Encodings guide, the STIX OT2 fonts have two extra symbols at high
+positions in the font, making tex4ht complain about differences
+between the actual fonts and the standard OT2 .htf.  I fixed that by
+running generate.htf for ot2-stixgeneral and then copying the right
+font property lines from ot1-stixgeneral.htf by hand.
+
+\begin{lstlisting}
+  ./generate_htf.py -e stix-ot2.enc STIXGeneral-Regular.pfb ot2-stixgeneral.htf
+\end{lstlisting}
+
+For the Droid fonts I followed a similar procedure, though they were
+simpler.  For the four classes of fonts with as-far-as-I-know
+nonstandard encodings, I used generate\_htf to make characters lists
+for them.  I then used alias() to alias the font classes with standard
+encodings and assign font properties for everything.
+
+I never resolved for certain how to name the .htf files.  I
+hypothesize that tex4ht wants a .htf file for each .tfm file, because
+each .htf file is preceded by a reference to a .tfm file in tex4ht's
+output.  I did this and it seemed to work, but I can't be sure.  If I
+wanted to write a test to make sure the right characters are connected
+to the right glyphs, I'd want to parse the HTML from
+\url{http://www.stixfonts.org/charactertable.html}. However, I have no
+idea how the fonts from the files in the STIX CTAN package correspond
+to the fonts in the STIX project's tables, so I would have to figure
+that out first and it would be a lot of work.
+
+
+\subsection{KF8/AZW3 Output}
+\label{sec:kf8/azw3_output}
+
+Makefile for htlatex.
+
+\begin{lstlisting}
+htlatex <name>.tex images.cfg ``''``-c dvisvgm''``-interaction=nonstopmode''
+htlatex <name>.tex ``xhtml,svg''``''``-c dvisvgm''``-interaction=nonstopmode''
+
+ebook-convert <name>.html .azw3 --pretty-print
+ebook-convert <name>.html .mobi --pretty-print --mobi-keep-original-images --mobi-file-type=new
+
+htlatex command-line options
+\end{lstlisting}
+
+First block: options passed to htlatex, either tex4ht package names or
+options (html, xhtml, info, svg, other graphics packages options) or
+the path to a configuration file.
+
+Second block: options to passed to tex4ht.  Most of the examples are
+various font commands which I don't think I'll need.
+
+Third block: options passed to t4ht, including -e for the path to
+tex4ht.env and -c for options defined like <tag> </tag> in
+tex4ht.env.  
+
+Fourth block: options passed to latex itself.
+
+For some reason, the Kindle Keyboard will not display KF8 files named
+with the .mobi extension, so I have to rename them to .azw3
+(\url{http://www.mobileread.com/forums/showthread.php?t=190733}) or
+convert directly to AZW3.  Also, they have to be transferred with USB,
+Kindle mail won't work.
+
+Need to test Kindlegen.  Calibre isn't really intended for production
+quality ebooks, which may be good or bad---good if Kindlegen is too
+strict on its input, bad if it produces inferior output.
+
+\url{
+https://tex.stackexchange.com/questions/27519/text4ht-and-luatex
+}
+
+htlualatex script.
+
+
+\url{%
+https://tex.stackexchange.com/questions/100426/which-version-of-latex-permits-more-than-16-alphabets
+}
+
+\url{%
+https://github.com/phst/lualatex-math/issues/7
+}
+
+(/usr/share/texlive/texmf-dist/fonts/tfm/public/droid/DroidSansMono-01.tfm)
+--- warning --- Couldn't find font `DroidSansMono-01.htf' (char codes: 0--255)
+(/usr/share/texlive/texmf-dist/fonts/tfm/public/droid/DroidSerif-Bold-01.tfm)
+--- warning --- Couldn't find font `DroidSerif-Bold-01.htf' (char codes: 0--255)
+(/usr/share/texlive/texmf-dist/fonts/tfm/public/droid/DroidSerif-Italic-01.tfm)
+(DroidSerif-Italic-01.htf)
+Searching `DroidSerif-Regular-01.htf' for `DroidSerif-Italic-01.htf'
+(DroidSerif-Regular-01.htf)
+(/usr/share/texlive/texmf-dist/fonts/tfm/public/droid/DroidSerif-Italic-02.tfm)
+--- warning --- Couldn't find font `DroidSerif-Italic-02.htf' (char codes: 0--255)
+(/usr/share/texlive/texmf-dist/fonts/tfm/public/droid/DroidSerif-Regular-01.tfm)
+(DroidSerif-Regular-01.htf)
+(/usr/share/texlive/texmf-dist/fonts/tfm/public/droid/DroidSerif-Regular-01.tfm)
+(DroidSerif-Regular-01.htf)
+(/usr/share/texlive/texmf-dist/fonts/tfm/public/droid/DroidSerif-Regular-02.tfm)
+(DroidSerif-Regular-02.htf)
+
+
+\subsection{TeX4ht Configuration Files}
+\label{sec:tex4ht_configuration_files}
+
+images.cfg and tex4ht.env: Two configuration files for htlatex that
+tell it to generate XHTML and SVG images and specifies how images
+should be handled.
+
+After a lot of work, I've finally partially deciphered how to get
+tex4ht's various options work.  Figuring this out took a combination
+of reading this question,
+\url{https://tex.stackexchange.com/questions/43772/latex-xhtml-with-tex4ht-bad-quality-images-of-equations},
+looking at a .log of tex4ht output with the info option enabled, and
+reading the documentation for the tex4ht Unix configuration at
+\url{https://www.tug.org/applications/tex4ht/mn-unix.html} .
+
+With its default settings, tex4ht will try to convert equations and
+other images into PNGs using convert, one of a set of possible scripts
+in tex4ht.env whose lines all start with G, which I will call
+G-scripts.  The Debian maintainer for tex4ht sets this default to
+convert to PNG using dvipng by setting a compiler flag in the Makefile
+that compiles tex4ht.c, LGTYP.  (From
+\url{https://www.tug.org/applications/tex4ht/mn-unix.html}: ``The
+bitmap formats can be controlled by a ‘g’ record of tex4ht.env, a ‘-g’
+switch of tex4ht.c, and a -LGTYP switch in the compilation of
+tex4ht.c. The default setting assumes the ‘png’ format.")  I can't
+change that without recompiling.  All scripts in tex4ht.env are
+enclosed with tags <tag> </tag> like so.  The default is set by the
+-LGTYP flag.  You can override the default by sending ``-c tag''to t4ht
+(the third options block when calling htlatex or analogous commands).
+For instance, there are three G-scripts, convert, netpbm, and dvipng,
+and passing ``-c convert''on a Debian installation of tex4ht changes
+the G-script from dvipng to convert.
+
+I quote: ``The structure of [tex4ht.env] is little bit strange:
+
+\begin{lstlisting}
+ <tag>
+Gsome command and the parameters
+ Ganother command
+</tag>
+ <anothertag>
+GNext command
+ Gcommand again
+ </anothertag>
+\end{lstlisting}
+
+Spaces are important. All lines with space at the beginning are
+ignored. Tagged sections are sometimes ignored. Quoting tex4ht.env
+itself:
+
+'Tagged script segments ... are scanned only if their names are
+specified within -ctag switches of tex4ht.c and t4ht.c. When -c
+switches are not supplied, a -cdefault is implicitly assumed.'
+
+In the example, only GNext command is actually executed.''
+(\url{https://tex.stackexchange.com/questions/43772/latex-xhtml-with-tex4ht-bad-quality-images-of-equations})
+
+So, spaces in tex4ht.env are meaningful in a weird way.  This gives me
+enough information to add my own G-scripts to tex4ht.env and to alter
+the existing G-scripts.  Each G-script starts with a line that looks
+like ``G.ext''(ext is usually an image file extension) or ``G.''and has
+several lines that start with G and run shell commands like dvipng or
+rm.  However, it turns out that passing ``-g ext''to tex4ht (the second
+options block when calling htlatex) doesn't seem to do anything like
+what the documentation suggests.  When I tested it, rather than
+treating ext as any kind of file extension, it caused tex4ht to look
+for ``ext.dvi''as the dvi file to process for the images, causing it to
+fail to generate the script file that t4ht later processes to do image
+conversion.
+
+\begin{lstlisting}
+tex4ht.c (2009-01-31-07:33 kpathsea)
+tex4ht -f/test.tex 
+  -i/usr/share/texmf/tex4ht/ht-fonts/-g 
+  svg 
+--- warning --- Can't find/open file `svg.dvi'
+--- error --- Can't find/open file `svg.dvi'
+----------------------------
+t4ht.c (2009-01-31-07:34 kpathsea)
+t4ht -f/test.tex 
+  -e 
+  tex4ht.env 
+  -c 
+  dvisvgm 
+(tex4ht.env)
+--- warning --- Can't find/open file `test.lg'
+\end{lstlisting}
+
+As far as I can tell, there are two ways to define the image output.
+One is described in the .log of a file compiled with ``info":
+
+\begin{lstlisting}
+\Configure{Picture}....................... #1
+
+  #1  Extension name for bitmap files of dvi pictures,
+      stored in \PictExt
+
+  Default: \Configure{Picture}{.png}
+
+  The extension names of bitmap files of glyphs of htf fonts may be
+  determined within a g-entry in the environment file tex4ht.env, or a
+  g-flag of the tex4ht.c utility.
+\end{lstlisting}
+
+Thus, putting \verb+\Configure{Picture}{.svg}+ in a .cfg file and calling
+htlatex with the .cfg file as the first option and an appropriate
+G-script with a ``-c tag''switch in the third option block will
+generate SVG output.  The other method is calling htlatex with the
+first option as ``xhtml,svg''or a .cfg file with
+\verb+\Preamble{xhtml,svg}+.  In addition to converting the images in the
+.dvi to the SVG, this also tries to insert the images as XHTML code
+into the .html file.  This is related to the files tex4ht-info-svg.tex
+and tex4ht-svg.tex in the literate sources, those options are causing
+a different script to get called.  Note that with this second method,
+you have to run htlatex twice, once to generate the SVG files and
+again for htlatex to include them in the HTML, see tex4ht-svg.tex:
+``Requires two compilations (e.g., with \verb!mzlatex try ``html,svg"!)
+for importing the SVG code.'' The attempted insertion obviously works
+for the SVG equations and other images converted to SVG and breaks
+horribly for other image formats because it ends up inserting a bunch
+of binary data into the XHTML.  Testing suggests that the output after
+ebook-convert looks identical both in Calibre and on the Kindle,
+though, which means the first solution is good enough.
+
+As for figures, rather than equation images, I want to pass through
+PNGs and JPEGs.  The first method does this, inserting links to the
+images into the XHTML code.  I would like to try to directly convert
+the EPS images to SVG.  However, it turns out that using latex to
+compile EPS to DVI and then dvisvgm to convert to SVG produces
+*better* output than using inkscape or gs, the two converters
+available to me, to convert EPS to SVG: both of them break on one of
+my test files.  There are longer chains possible that convert EPS to
+something else to SVG, but that defeats the point.  I used pdf2svg to
+convert PDFs with a .cfg file patterned on the first answer in this
+thread,
+\url{https://tex.stackexchange.com/questions/46156/pdf-image-files-and-htlatex}
+.
+
+Both PDF and EPS images need more testing.
+
+\DeclareGraphicsExtensions and \DeclareGraphicsRule may be useful, see
+the graphicx PDF page 13.  Probably the order I want for
+\DeclareGraphicsExtension is EPS, PDF, PNG, JPEG.
+
+
+\subsection{Call arXiv API with Python}
+\label{sec:call_arxiv_api}
+
+kindlize.py: The main change needed here is to use the arXiv's API
+in the initial call to get the XML, parse it to get the author name
+and other metadata, and then pass the author name, url for the source,
+and so on to convert\_arxiv.py.
+
+
+\subsection{Python Script to Do Preprocessing and Call Makefiles}
+\label{sec:python_script}
+
+convert\_arxiv.py: This is one of the existing scripts that I need to
+edit.  The regexes that find the author name need to be removed.  It
+needs to download the source, do any image preprocessing (on image
+files or the \LaTeX file), delete any known in compatible patches,
+insert a call to kindle.sty, identify the journal and insert
+appropriate journal-specific style and class files, and handle \LaTeX
+2.09 issues.  Eventually, it needs to execute the Makefiles.  It is
+not clear to me how some things should be divided up between this
+script and the Makefiles.
+
+arxiv2bib (\url{https://pypi.python.org/pypi/arxiv2bib/1.0.5}) is the
+source for the regex used to recognize arxiv paper numbers.
+
+
+
+\section{DVI to SVG}
+\label{sec:dvi2svg}
+
+
+\subsection{dvisvgm (bugged in Ubuntu's version)}
+\label{sec:dvisvgm}
+
+\url{http://dvisvgm.sourceforge.net/Manpage}
+
+\begin{lstlisting}
+G.svg
+Gdvisvgm --bbox=min --no-fonts --page=%%2 --stdout %%1 > %%3
+\end{lstlisting}
+
+\url{https://tug.org/pipermail/tex-live/2014-March/034947.html}
+
+Rather than generating an image, dvisvgm will often give the error,
+
+\begin{lstlisting}
+  DVI error: undefined font number <foo>
+\end{lstlisting}
+
+From the above post this looks like a bug in the version of dvisvgm
+packaged in texlive---htlatex does in fact generate a multipage .idv
+file, and I'm getting the same error message, so I think it's the same
+bug.  It will probably take about a million years for texlive to
+update its version of dvisvgm and then for Ubuntu to update its
+version of texlive, so the alternatives are compile a local version of
+dvisvgm or use some other utility/conversion path.
+
+After compiling and installing the latest version, the bug is fixed.
+The next problem was that dvisvgm kept appending the page number to
+the end of the file name I provided with --output (%%3), leading to
+files like ``<TeX file name>1x.svg-04''that htlatex wouldn't
+recognize.  From
+\url{https://tex.stackexchange.com/questions/43772/latex-xhtml-with-tex4ht-bad-quality-images-of-equations},
+I found another dumb workaround, using --stdout and redirection to
+assign an arbitrary file name.  I had to set --no-fonts because of
+course Kindle's file format doesn't support SVG fonts, why would it?
+
+\url{https://github.com/WojciechMula/pydvi2svg}
+
+Maybe-dead project (last updated four years ago, mostly), Python
+script that converts dvi to svg.  I haven't tested it.
+
+\subsection{dvips -> convert (would need to compile a local copy with
+  autotrace support)}
+\label{sec:dvips_convert}
+
+\begin{lstlisting}
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.ps
+Gconvert -crop 0x0 -density 110x110 -transparent '#FFFFFF' zz%%4.ps %%3
+Grm zz%%4.ps
+\end{lstlisting}
+
+ImageMagick uses a bunch of other programs to handle conversion of
+various formats.  ``convert -list delegate''gives a partial list, the
+full list is in /etc/ImageMagick/delegates.xml.  Ubuntu's version of
+convert calls autotrace for .pnm => .svg, uniconvertor for .cdr (Corel
+Draw files) => .svg, and dot (?---can't find this program) for ``dot''
+files => .svg.  htlatex calls dvips to convert the .dvi file to a .ps
+file and then convert to make a .svg file.  There is no ps => svg
+converter listed and no general ps converter, either.  I'm not sure
+what's going on internally with convert.
+
+That said, ImageMagick's documentation says that convert is now
+capable of converting raster images to SVG *if* the AutoTrace library
+(\url{http://autotrace.sourceforge.net/}) is installed and ImageMagick
+is appropriately configured:
+\url{http://www.imagemagick.org/Usage/draw/#svg_output}.  If not,
+
+\begin{quote}
+  If the ``AutoTrace''library is not installed and compiled into IM,
+  then the SVG output generated will be a huge number of single pixel
+  circles, generating a binary result, rather than a smooth SVG
+  outlined image. Such images are huge by comparision, and often take
+  a very long time to render by by SVG render.  
+\end{quote}
+
+This sounds like what's happening to me.
+
+After installing the autotrace package and experimenting, convert is
+still producing huge svg files.  To get convert to work, I'd have to
+recompile ImageMagick, and I don't feel like doing that unless I have
+no other choice.  Besides, compiling a local version of dvisvgm sounds
+a lot easier.
+
+\subsection{dvips -> pstoedit (non-free)}
+\label{sec:dvips_pstoedit}
+
+\begin{lstlisting}
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.eps
+Gpstoedit -f svg zz%%4.eps %%3  
+\end{lstlisting}
+
+The sample tex4ht.env file has a script that uses this path.  However:
+
+\url{http://www.pstoedit.net/}
+
+``The following formats are available as additional plugins on a
+shareware basis. . . .
+
+* SVG - scalable vector format. One candidate of the W3C for a web
+  standard for vector drawings. See \url{http://www.w3.org/Graphics/SVG/}
+  for more details.''
+
+\subsection{dvips -> inkscape (multiple issues)}
+\label{sec:dvips_inkscape}
+
+\begin{lstlisting}
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.ps
+Ginkscape --export-plain-svg %%3 zz%%4.ps
+Ginkscape --verb=FitCanvasToDrawing --verb=FileSave --verb=FileClose %%3
+\end{lstlisting}
+
+There are two basic problems.  For some reason, the SVGs produced by
+inkscape look like mostly a jumble of random characters with some
+recognizable letters when I view them in inkview, eog, chromium, and
+firefox, but when I use calibre to convert them, they look fine.  What
+gives?  The more serious problem is that there's a
+canvas/page/bounding-box/something-or-other issue.  The default puts
+each equation in its own page-sized image.  The
+``--export-area-drawing''and ``--export-area-page''options don't have
+any impact with --export-plain-svg.  There is a GUI option to ``Resize
+page to content''-> ``Resize page to drawing or selection.'' This makes
+two (relevant) changes to the SVG file.  In the case of my example
+file, diff outputs:
+
+\begin{lstlisting}
+11,12c11,12
+<    width="743.75''
+<    height="1052.5''
+---
+>    width="147.93837''
+>    height="89.511612''
+19c19
+<      transform="matrix(1.25,0,0,-1.25,0,1052.5)''
+---
+>      transform="matrix(1.25,0,0,-1.25,-231.03976,361.20471)'' 
+\end{lstlisting}
+
+Replacing these values in the appropriate SVG section in the html file
+generated by htlatex gives an SVG that's the right size (but with
+characters still mangled).  Theoretically, I could write a script to
+do this, if I had any idea how to calculate those values, which I
+don't.
+
+It turns out that inkscape has a command line option --verb which lets
+you execute almost any GUI function from the command line
+(\url{http://tavmjong.free.fr/INKSCAPE/MANUAL/html/CommandLine.html}).
+inkscape --verb-list gives a list of options for --verb.  The GUI
+function I mentioned above is FitCanvasToDrawing.  Unfortunately, for
+some insane reason --verb *can't* be used with the --without-gui
+option (\url{https://bugs.launchpad.net/inkscape/+bug/843260}), which
+makes using it extremely slow.
+
+This is a Python script that does the clipping:
+
+\url{https://github.com/skagedal/svgclip}
+
+\subsection{dvips -> gs}
+\label{sec:dvips_gs}
+
+\url{http://www.eprg.org/research/SVG/ps2svg/}
+
+This is the webpage of an SVG driver for ghostscript.  ghostscript -?
+indicates that Ubuntu has it installed.
+
+dvipdf (or similar) -> some PDF to SVG converter
+
+See below for possible PDF to SVG converters.  I haven't tested this
+route.
+
+
+\section{EPS to SVG}
+\label{sec:eps2svg}
+
+\begin{lstlisting}
+gs -sDEVICE=svg
+
+inkscape --export-plain-svg
+\end{lstlisting}
+
+Both of these have the same issues as they did for the dvi -> ps ->
+svg route, which is that they don't seem to handle dashed lines.  Or,
+at least, they break on a particular file that shows up in one of my
+test arXiv papers, because they seem to handle all the dashed
+generated by programs on Linux fine.  The webpage of the SVG driver
+for ghostscript (\url{http://www.eprg.org/research/SVG/ps2svg/})
+explicitly states that dashed lines were not implemented, and as
+Inkscape since version 0.47 has used ghostscript to import ps and eps
+files
+(\url{http://wiki.inkscape.org/wiki/index.php/Release_notes/0.47#Import.2FExport}),
+I suspect it may have inherited this lack of implementation.  (This
+doesn't make complete sense, the ghostscript SVG driver is an *export*
+driver while inkscape uses ghostscript for *import*, but I've tested
+it and the problem exists irrespective of whether it should or not.)
+
+pstoedit
+
+Same problem---the SVG driver's shareware.  This script,
+\url{https://gist.github.com/DavidGriffith/5097435}, circumvents the
+shareware driver by using pstoedit to convert to a Skencil (formerly
+called Sketch, \url{https://en.wikipedia.org/wiki/Skencil}, packaged
+in Ubuntu as sketch) file and then a Skencil utility to convert to
+SVG.
+
+
+\section{PDF to SVG}
+\label{sec:pdf2svg}
+
+inkscape
+
+\url{http://www.cityinthesky.co.uk/pdf2svg.html}
+
+On a file from a test arXiv paper, pdf2svg does a better
+job---inkscape drops some minus signs and can't handle an omega.
+
+\url{https://bitbucket.org/petermr/pdf2svg-dev/overview}
+
+This is an in-development java program for converting PDF to SVG.  I
+haven't tested it.  Part of a larger project.
+
+
+% OLD DISCUSSION
+
+% I want to make the fonts in the out-of-line equations larger than the
+% in-line equations.  Unfortunately, this is difficult to do.  With
+% \DeclareMathSizes
+% (\url{http://www.tex.ac.uk/cgi-bin/texfaq2html?label=mathsize}), I can
+% change the font sizes in math mode globally.  Unfortunately, htlatex
+% processes *some* inline math into text---italicized or bolded
+% variables, for instance---and the rest of the inline math and the
+% \displaystyle math into images.  htlatex assigns a font size relative
+% to the rest of the text for the math that it puts into text, which
+% means if I increase the font size with \DeclareMathSizes, it ends up
+% larger than the normal text on my Kindle, and my Kindle scales it
+% according to the font size setting.  If I don't use \DeclareMathSizes,
+% the mathematics interpreted as text will be the right size, but the
+% images will be smaller than the text if the font size chosen in \LaTeX
+% is 10pt, plus it would be nice to make the equations bigger so they're
+% more legible.
+
+% For subscripts and superscript font sizes relative to the main text
+% size, ``The values used are \defaultscriptratio=0.7, and
+% \defaultscriptscriptratio=0.5.''
+% (\url{http://www.tex.ac.uk/cgi-bin/texfaq2html?label=mathsize})
+
+% Remaining problems: fix the length issues.
+
+%  Problem the 1st: I need to override the math fonts in individual documents in a way that doesn't end up with inconsistently scaled equations.
+%  The root of this problem is that htlatex processes some inline math, that can be represented as normal characters and font commands, into text and the rest of the math into images.  When I convert that to .mobi, the text is subject to the Kindle's reformatting---the Kindle uses its own fonts and font sizes to display it.  The images are completely fixed and aren't resized at all.
+%  I haven't measured but the Kindle's normal display font is like 11-12pt.  It's also darker (for some reason?) than the fonts in the image-equations end up, and the lines are thicker.
+%  This creates a couple of problems.  If the \LaTeX document I converted is in 10pt font, that means all the image-equations are now smaller than the text font and math, because that's in 11-12pt and the images are still 10pt.  Since the image-equations are already harder to read (because they're lighter and have thinner lines) than the text, having them be smaller also makes for eyestrain.
+%  If I use say \DeclareMath{10pt}{12pt}{10pt}{8pt} or something similar, then there's still a problem.  The image-equations are now put in the .dvi at 12pt and converted to images---that's fine, now they're about the same size as the text font, though still fainter and with thinner lines.  However, htlatex sets the math that it processes into text *relative* to the rest of the text in the document, so on 
+%  the Kindle the inline math that's text is larger than both the rest of the text and the image-equations.
+%  \DeclareMathSizes
+%  There are really two possible solutions here.  One is that if I could somehow override the document's settings and force all math into the same font---something 11-12pt and more readable on the Kindle---then while the image-equations are still not rescalable on the Kindle if I change the font size, they will at least be the same size as the other text, and so will the inline text math.
+%  Another is that I leave the fonts be and then do something to the images---scale them, make them darker, make the lines thicker, if that's possible---to make them more readable.
+%  At the moment, I don't know how to do this without affecting *all* the images in the document, including .eps images that might be processed into the .dvi file by latex.
+%  One method to solve that problem, of course, is to bypass the .dvi file for .eps images, which brings me to:
+%  Problem the 2nd: Like I alluded to above, going eps. -> .dvi -> .svg works better than going .eps -> .dvi.  In particular, I know for certain that the two good ways I have to convert from .eps -> .svg (pstoedit being shareware), inkscape and ghostscript, both omit dashed lines altogether, so they mangle a fair number of physics diagrams.
+%  I know that in ghostscript's case, this is because the .svg driver never has had support for dashed lines.
+%  Since inkscape uses ghostscript to import .eps and .ps files, I suspect that it has the same bug.
+%  It's inherited the same bug, I should say.
+%  If I can fix the second problem, that makes the first problem easier since I can do image manipulations on the image-equations without affecting any diagrams in the paper.
+
+
+\section{Annotated Bibliography}
+\label{sec:bibliography}
+
+
+
+\url{https://github.com/michal-h21/tex4ebook}
+
+\url{https://github.com/michal-h21/make4ht}
+
+~/texmf/tex/latex/tex4ebook/tex4ebook --format mobi Crakow.tex
+ebook-convert Crakow.epub Crakow.mobi
+
+This calls tex4ht and outputs an EPUB---I don't know if there are more
+steps in between or if it calls anything else here other than zip and
+tidy---then calls kindlegen to convert EPUB to MOBI.  Note that since
+I don't have kindlegen installed, I tested it with ebook-convert
+(Calibre).  I don't think it's very configurable in terms of image
+formats.  Testing suggests this doesn't even work as well as my
+configuration for tex4ht---on one of the arXiv papers, the author's
+name was doubled (Lucien Hardyhardy) on my Kindle's screen and the
+references/endnotes were at the front.  I assume the equations look
+better when I tested it on my own math documents for some independent
+reason, maybe font size or something.
+
+Michal-h21 is working on some of the same problems I am, so it may be
+worth looking more closely at some of his scripts so I can see if I
+can adapt them.
+
+
+\url{https://www.tug.org/applications/tex4ht/mn.html}
+
+This is the official website for tex4ht.  It's not very well-organized
+and it's hard to find things.  I'll list some useful subpages.
+
+\url{https://www.tug.org/applications/tex4ht/mn2.html}
+
+Kind of a table of contents.
+
+\url{https://www.tug.org/applications/tex4ht/mn-commands.html}
+
+Incomplete documentation for command-line options.
+
+\url{https://www.tug.org/applications/tex4ht/mn3.html} 
+
+Various ideas for making equations more legible in rasters that might
+apply to vector graphics.
+
+\url{https://www.tug.org/applications/tex4ht/mn-unix.html}
+
+Unix configuration instructions, provides some information on the
+compiler switches.
+
+\url{https://www.tug.org/applications/tex4ht/mn-htf.html}
+
+How to design virtual hypertext fonts.
+
+\url{https://www.tug.org/applications/tex4ht/mn41.html}
+
+How tex4ht finds virtual hypertext fonts.
+
+
+\url{https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=307647}
+
+Some useful discussion of how tex4ht generates non-Unicode .htf fonts
+from Unicode .htf fonts using .4hf files.
+
+
+\url{https://www.tug.org/pipermail/luatex/2014-March.txt}
+
+Some useful discussion of Luatex, tex4ht, fontspec, opentype fonts,
+and XML.
+
+
+\url{ftp://ftp.math.utah.edu/pub/tex/historic/fonts/fontname/fontname-2.2/fontname_5.html}
+
+\url{https://tex.stackexchange.com/questions/151192/tex4ht-html-output-increase-eps-image-resolution-without-affecting-math-images}
+
+\url{
+https://tex.stackexchange.com/questions/46156/pdf-image-files-and-htlatex
+}
+
+\url{https://tex.stackexchange.com/questions/43772/latex-xhtml-with-tex4ht-bad-quality-images-of-equations}?
+
+\url{https://tex.stackexchange.com/questions/119467/how-latex-makes-use-of-font-related-files-i-e-fd-map-enc-def-etc-whe}
+
+
+\subsection{arXiv}
+\label{sec:arxiv}
+
+\url{
+http://arxiv.org/help/faq/texlive
+}
+
+``Update 2011-12-06: arXiv switched to texlive 2011 with a new, updated and enhanced tree of local addons. Most of the advice below still applies.''
+
+
+
+\url{http://ef.gy/ebook-wtfs}
+
+Discussion of ebook issues, file name and formats, SVG, bad XHTML,
+lack of MathML support, DocBook, and others.  A useful overview of
+some stupidity.
+
+
+\url{https://en.wikibooks.org/wiki/LaTeX/Export_To_Other_Formats}
+
+List of converters.
+
+
+\url{http://vallettaventures.tumblr.com/post/20061046069/xetex-could-it-be-texs-saviour}
+
+Discusses tool chains with respect to unicode fonts and pstricks.
+
+
+\url{http://svgkit.sourceforge.net/SVGLaTeX.html}
+
+What it sounds like.  Uses latex -> dvips -> pstoedit to get the SVG.
+
+``Must validate the LaTeX for security reasons to prevent cross-site scripting. This means only a small subset of LaTeX is supported, the same as Texvc, which Wikipedia uses.''
+
+
+\url{www.ags.uni-sb.de/\%7Eadrianf/dvi2svg/}
+\url{https://web.archive.org/web/20070626031959/http://www.ags.uni-sb.de/~adrianf/dvi2svg/}
+
+Dead link.  The last record that archive.org has of it is in 2007, but
+the source isn't there.  Authored by the same person who wrote this
+paper, ``dvi2svg: Using the LaTeX layout on the Web''
+(\url{
+www.activemath.org/pubs/FrischaufLibbrecht-dvi2svg-TUG2006.pdf‎
+} or \url{
+www.tug.org/TUGboat/tb27-2/tb87frischauf.pdf
+}).  The other author (Paul
+Libbrecht) has a current page at \url{
+http://www.hoplahup.net/paul/about_me.html
+} and a copy of the paper's PDF.  If the code is still up on the
+Internet anywhere, I don't know where.
+
+
+\url{http://uce.uniovi.es/tips/Latex/HtLatexConfig.html}
+
+Htlatex configuration file, this site is about converting to HTML and Word.
+
+
+\url{http://waterprogramming.wordpress.com/2012/05/17/converting-an-svg-to-eps}/
+
+This is a site about going from SVG to EPS, focusing on Inkscape,
+discussing rasterization, and linking to some stackexchange threads.
+
+
+\url{http://sk1project.org/modules.php?name=Products&product=uniconvertor}
+
+python-uniconvertor
+
+This converts to SVG, but not from anything very useful---no EPS or
+PDF.
+
+
+\url{http://www.calcmaster.net/personal_projects/pdf2svg}/
+
+Uses an extremely circuitous route (pdf2ps -> pstoedit -> fig2dev with
+some scripting) to convert PDFs to SVGs.
+
+
+\url{
+http://timctaylor.wordpress.com/2014/02/24/kindle-support-for-unicode-pt2-how-to-use-unicode/
+}
+
+See discussion of how to incorporate HTML in UTF8 into Kindle ebooks.
+
+\url{
+facweb.knowlton.ohio-state.edu/pviton/support/swphtpa4.html‎
+}
+
+This is doing something crazy but it might be useful as a sample for
+figuring out more of how to write tex4ht config files.
+
+
+\subsection{Fonts}
+\label{sec:fonts_bib}
+
+
+\url{https://github.com/aravindavk/fontforge-python-cookbook}
+
+
+\url{https://tex.stackexchange.com/questions/48447/htf-for-chinese-utf8-fonts-other-than-unisong}
+
+
+\url{http://mademers.com/globalindieauthor/2013/03/best-fonts-for-kindle}/
+
+``Older Kindles and the Kindle DX uses Caecilia only.'' [This includes
+the Kindle Keyboard.]
+
+\url{http://mademers.com/globalindieauthor/2014/04/the-conumdrum-that-is-kindle-font-handling}/
+
+
+\url{http://www.tex.ac.uk/cgi-bin/texfaq2html?label=psfchoice}
+
+
+\url{http://www.gust.org.pl/projects/e-foundry/math/misfortunes02.pdf}
+
+
+\url{http://www.ascenderfonts.com/font/lucida-bright-math-family.aspx}
+
+\url{
+http://www.micropress-inc.com/fonts/chmath/chmain.htm
+}
+
+CH Math, a pricey slab-serif math font meant to go with Bitstream
+Charter.
+
+\url{
+http://www.ctan.org/tex-archive/fonts/mathdesign/
+}
+
+\url{
+http://www.ctan.org/tex-archive/fonts/charter
+}
+
+\url{
+http://www.tug.dk/FontCatalogue/
+}
+
+Most comprehensive catalog with comparisons of fonts I've found, with
+visual comparisons of different fonts.
+
+\url{
+http://www.ctan.org/tex-archive/fonts/arev/
+}
+
+\url{
+https://www.tug.org/pracjourn/2006-1/schmidt/schmidt.pdf‎
+}
+
+\url{
+web.eecs.utk.edu/~mgates3/docs/latex-fonts.pdf‎
+}
+
+\url{
+http://www.ctan.org/pkg/fntguide
+}
+
+\url{
+http://www.ctan.org/tex-archive/macros/latex/required/psnfss
+}
+
+\url{
+http://www.forkosh.com/pstex/index.htm
+}
+
+\url{%
+  http://math.ucsd.edu/~msharpe/mathsamples.pdf
+}
+
+This doesn't include the math or text fonts I'm most interested in.
+
+\url{https://www.tug.org/fonts/}
+
+\url{http://www.tex.ac.uk/cgi-bin/texfaq2html?label=psfchoice}
+
+\url{http://luc.devroye.org/math.html}
+
+\url{https://tex.stackexchange.com/questions/155916/beamer-using-sans-serif-numbers-in-math-mode-together-with-lualatex-and-the-fon}
+
+\url{http://www.mobileread.com/forums/archive/index.php/t-80207.html}
+
+Font surveys and suggestions of varying quality.
+
+\url{
+https://tex.stackexchange.com/questions/141033/functional-difference-between-newtx-times-termes-stix-xits-text-and-math
+}
+
+\url{
+http://mirror.hmc.edu/ctan/info/virtualfontshowto/virtualfontshowto.txt
+}
+
+\url{
+https://web.archive.org/web/20110828033023/http://homepage.mac.com/bkerstetter/tex/fonttutorial-current.html
+}
+
+
+
+\subsection{2.09 Compatibility Mode}
+\label{sec:compatibility_mode}
+
+\url{
+http://www.giss.nasa.gov/tools/latex/versions.html
+}
+
+
+\subsection{Luatex, xetex, context, et al.}
+
+\url{
+https://www.tug.org/pipermail/luatex/2012-May/003611.html
+}
+
+\url{
+https://tex.stackexchange.com/questions/3094/drawbacks-of-xetex-luatex
+}
+
+\url{
+https://tex.stackexchange.com/questions/36/differences-between-luatex-context-and-xetex?rq=1
+}
+
+\url{
+https://tex.stackexchange.com/questions/87155/frequently-loaded-packages-differences-between-xelatex-and-lualatex?lq=1
+}
+
+\url{
+https://tex.stackexchange.com/questions/94438/availability-of-latex-packages-functionality-in-context-xetex-and-luatex
+}
+
+\url{
+https://www.tug.org/levels.html
+}
+
+All the following links discuss xetex/tex4ht font issue:
+
+\url{
+http://cikitsa.blogspot.com/2013_02_01_archive.html
+}
+
+\url{
+wpinbacker.blogspot.com/2011/01/tex4ht-and-xelatex.html‎
+}
+
+\url{
+https://www.tug.org/pipermail/tex4ht/2013q1/thread.html#719
+}
+
+One of the tex4ht maintainers seems to confirm that tex4ht and OT/TT
+aren't compatible.
+
+\url{
+https://tex.stackexchange.com/questions/122559/unicode-math-and-tex4ht-with-utf-8-input
+}
+
+Further confirmation that tex4ht doesn't work with OT fonts.
+
+
+\subsection{Latex Packages/Classes}
+\label{sec:packages_classes}
+
+\url{
+www.tug.org/TUGboat/tb28-1/tb88flynn.pdf‎
+}
+
+\url{
+www.tex.ac.uk/ctan/macros/latex/doc/clsguide.pdf
+}
+
+\url{
+en.wikibooks.org/wiki/LaTeX/Creating_Packages‎
+}
+
+
+\section{Bugs Affecting This Project}
+\label{sec:bugs}
+
+dvisvgm is broken in texlive/Ubuntu.
+
+tlmgr is broken: \url{https://bugs.launchpad.net/ubuntu/+source/texlive-base/+bug/1242914}
+
+Inkscape and gs bugs/missing functionality, maybe.
+
+texlive-extra-fonts missing Type 1 versions of the STIX fonts.
+
+File as a feature request against texlive in Debian/Ubuntu.
+
+texlive-lang-greek is a hidden dependency for mathastext because of
+LGRcmr.fd
+
+\subsection{kindlize}
+\label{sec:kindlize_bugs}
+
+This is stuff that's actually for-real broken, not just bad design.
+
+\begin{itemize}
+\item epsf.tex is missing from clslib.
+\item Geometry being in a class creates an options clash.
+\end{itemize}
+
+\end{document}

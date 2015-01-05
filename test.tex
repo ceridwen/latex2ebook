@@ -1,0 +1,206 @@
+\documentclass[12pt]{article}
+
+\makeatletter
+
+\usepackage{graphicx}
+\setkeys{Gin}{width=\textwidth} % Theoretically this forces all
+  % figures added with \includegraphics to scale to the textwidth.
+
+% PDF-specific formatting changes
+% These will work with both pdftex and luatex but not xetex 
+\usepackage{ifpdf}
+\ifpdf
+
+% Clears the header and footer, including the page numbers
+% Fancyhdr offers another way to do this.
+\pagestyle{empty}
+
+\@ifpackageloaded{geometry}{%
+  % Geometry is loaded, change options.
+  \geometry{paperwidth=3.6in,
+            paperheight=4.8in,
+            margin=0in,
+            onecolumn}
+}{%
+  % If geometry isn't loaded, load it.
+  \usepackage[paperwidth=3.6in,
+                  paperheight=4.8in,
+                  margin=0in,
+                  onecolumn]{geometry}
+}
+\else
+% tex4ht- or DVI-specific options would go here if there were any
+\fi
+
+% Set fonts
+
+% This code is necessary to use more than 16 math alphabets under
+% luatex/xetex.
+
+\usepackage{etoolbox}
+\def\new@mathgroup{\alloc@8\mathgroup\mathchardef\@cclvi}
+\patchcmd{\document@select@group}{\sixt@@n}{\@cclvi}{}{}
+\patchcmd{\select@group}{\sixt@@n}{\@cclvi}{}{}
+
+% Since I'm forced into using luatex/xetex, I should replace this with
+% OpenType fonts and fontspec for the PDF.
+
+% Amsmath has to be loaded after stix and before mathastext
+
+% Don't load stix text fonts.
+% \usepackage[notext]{stix}
+\usepackage{pxfonts}
+\usepackage{amsmath}
+\usepackage{droid}
+\usepackage{microtype}
+% Options: use Droid's Greek letters, default sizes for
+% super/subscripts, and default to italic Latin letters in math mode.
+\usepackage[defaultmathsizes,italic]{mathastext}
+
+% LGRgreek,
+
+% This is a command I took from the newpxfonts/newtxfonts package
+% author to diagnose problems with math alphabets.  For some reason it
+% doesn't work under luatex/xetex.
+
+% \newcommand{\ShowMathFonts}{%
+% \pxf@ntname{operators}
+% \pxf@ntname{boldoperators}
+% \pxf@ntname{symbols}
+% \pxf@ntname{boldsymbols}
+% \pxf@ntname{largesymbols}
+% \pxf@ntname{boldlargesymbols}
+% \pxf@ntname{AMSa}
+% \pxf@ntname{boldAMSa}
+% \pxf@ntname{AMSb}
+% \pxf@ntname{boldAMSb}
+% \pxf@ntname{letters}
+% \pxf@ntname{boldletters}
+% \pxf@ntname{lettersA}
+% \pxf@ntname{boldlettersA}
+% \pxf@ntname{symbolsC}
+% \pxf@ntname{boldsymbolsC}
+% \pxf@ntname{largesymbolsA}
+% \pxf@ntname{boldlargesymbolsA}
+%   \typeout{*** Mathgroups ***}
+%   \count@\z@
+%   \loop\ifnum\count@<16
+%     \def\@@npx@{}
+%     \expandafter\let\expandafter\@npx@\csname @@@X\the\count@\endcsname
+%     \ifx\@npx@\relax\else\def\@@npx@{\space[\@npx@]}\fi
+%     \typeout{(\the\count@: \the\textfont\count@ = \fontname\textfont\count@\@@npx@)}
+%     \advance\count@\@ne
+%   \repeat
+%   \typeout{***}}
+
+\makeatother
+
+% \usepackage{kindle}
+
+\begin{document}
+
+% This is a bare-bones file to test graphics handling.
+
+\textsc{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}
+Fusce at ipsum et tellus sagittis lobortis. \textit{Sed eu dui nec
+  metus auctor adipiscing.} \textbf{Suspendisse potenti.} \texttt{Duis
+  sollicitudin fringilla facilisis.} \textsf{In sit amet malesuada
+  magna.} Aliquam erat volutpat. Proin id ullamcorper nulla. Praesent
+semper erat quis ligula consequat, dignissim dapibus nunc
+pretium. Donec semper est arcu, sit amet commodo risus sollicitudin
+sed. Proin tristique cursus risus, a tempor neque gravida eu. Cras id
+posuere felis, nec tristique odio. Sed porttitor magna dolor, sit amet
+rhoncus lectus laoreet a. Vivamus et velit tincidunt, sagittis justo
+vitae, hendrerit risus. Integer non arcu non nisl vehicula
+congue. Mauris porta dui a facilisis mollis.
+
+\begin{eqnarray}
+  \label{eq:maxwell}
+  \nabla \cdot \mathbf{E} & = & \frac{\rho}{\epsilon_0}\\
+  \nabla \cdot \mathbf{B} & = & 0\\
+  \nabla \times \mathbf{E} & = & - \frac{\partial \mathbf{B}}{\partial
+    t}\\
+  \nabla \times \mathbf{B} & = & \mu_0 \left(\mathbf{J} + \epsilon_0
+  \frac{\partial \mathbf{E}}{\partial t}\right)
+\end{eqnarray}
+
+Duis dignissim sit amet neque quis facilisis. Nam sodales accumsan
+nisi, imperdiet vulputate quam egestas convallis. Vivamus nec magna
+non lacus porta pellentesque nec et nisi. Cras in volutpat quam, eu
+fermentum felis. Quisque quis fringilla justo. Integer luctus elit
+massa, eget pulvinar nunc congue id. Proin sed semper leo, a
+consectetur ipsum. Ut nec lobortis turpis, egestas aliquet
+leo. Vestibulum nec neque dignissim, sagittis nunc eu, ultricies
+lacus. Sed id elit lacinia, auctor est ut, aliquet urna. Donec vitae
+elit risus.\footnote{This is a footnote.}
+
+\begin{figure}
+  \centering
+  \includegraphics{Ni-dopedZnO_nanocrystals.jpg}
+  \caption{JPEG}
+  \label{fig:jpeg}
+\end{figure}
+
+In sit amet leo sit amet arcu fringilla tincidunt. Proin mi tellus,
+semper at iaculis ac, aliquam et velit. Suspendisse id neque suscipit,
+mollis urna vel, dapibus tortor. Nam pellentesque, justo malesuada
+lacinia facilisis, ante velit tincidunt mauris, eget volutpat lorem
+nibh et augue. Nulla pretium, quam at faucibus ornare, ipsum tortor
+porta lectus, vel volutpat elit dolor ut urna. Aenean aliquam
+tincidunt erat, eu condimentum erat venenatis ac. In est lacus, rutrum
+imperdiet quam eget, ornare vulputate purus. Vivamus at diam ut tortor
+sagittis gravida at eu eros.
+
+\begin{figure}
+  \centering
+  \includegraphics{comparemeasure.pdf}
+  \caption{PDF}
+  \label{fig:pdf}
+\end{figure}
+
+Nunc fermentum dapibus neque, ullamcorper pretium purus venenatis
+vitae. Cras massa lorem, bibendum ac elit a, facilisis tincidunt
+felis. Nam a erat iaculis, dapibus nunc fringilla, gravida
+ligula. Suspendisse potenti. Nullam sed lorem in nulla consectetur
+mattis. Cras sed laoreet magna. Curabitur eget tellus in lorem
+consequat varius. Ut facilisis eros lorem, eget semper enim iaculis
+at. Fusce porttitor, urna vitae elementum dapibus, enim ligula
+placerat massa, eget laoreet neque dolor vel lectus. Sed et risus quis
+tellus egestas fringilla molestie vitae dolor. Proin tempor vehicula
+nulla vel faucibus.
+
+\begin{figure}
+  \centering
+  \includegraphics{lines.png}
+  \caption{PNG}
+  \label{fig:png}
+\end{figure}
+
+Curabitur aliquet diam nisl, in sagittis erat aliquam non. Ut
+ultricies augue consectetur sapien adipiscing, blandit pulvinar orci
+euismod. Nulla id dolor a leo convallis cursus vestibulum ut
+turpis. Quisque vel gravida mi. Interdum et malesuada fames ac ante
+ipsum primis in faucibus. Integer gravida lorem sit amet tortor
+congue, non feugiat enim pulvinar. Phasellus sapien justo, vestibulum
+vel accumsan et, vehicula at metus. Donec eu placerat est.
+
+\begin{figure}
+  \centering
+  \includegraphics{gp1-1-12.eps}
+  \caption{EPS}
+  \label{fig:eps}
+\end{figure}
+
+\begin{equation}
+  \label{eq:euler_identity}
+  e^{i\pi} + 1 = 0
+\end{equation}
+
+\[A \mathfrak{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathscr{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathcal{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+\[A \mathbb{ABCDEFGHIJKLMNOPQRSTUVWXYZ}\]
+
+% \ShowMathFonts
+
+\end{document}
