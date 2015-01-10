@@ -18,9 +18,12 @@ may be necessary to edit pdf-ebook.sty to set geometry correctly.
 
 ### Kindle
 
-This requires TeX4ht (https://www.tug.org/tex4ht/), dvisvgm (http://dvisvgm.sourceforge.net/), and Kindlegen (http://www.amazon.com/gp/feature.html?docId=1000765211) or Calibre (http://calibre-ebook.com).
+This requires TeX4ht (https://www.tug.org/tex4ht/), dvisvgm
+(http://dvisvgm.sourceforge.net/), and Kindlegen
+(http://www.amazon.com/gp/feature.html?docId=1000765211) or Calibre
+(http://calibre-ebook.com).
 
-Add images.cfg to the directory and run,
+Add images.cfg and tex4ht.env to the directory and run,
 
 ````
 htlatex <name>.tex images.cfg "-c dvisvgm" "-interaction=nonstopmode"
@@ -49,3 +52,7 @@ Standard LaTeX files don't display well on ebook readers.
 
 pdf-ebook.sty uses the geometry and ifpdf packages, both of which are
 distributed with TeX Live.
+
+## License
+
+MIT.
